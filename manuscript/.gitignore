@@ -1,0 +1,4 @@
+node_modules/
+out/*-raw.pdf
+out/shot-*.png
+out/grounds.html
