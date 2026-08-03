@@ -571,7 +571,7 @@ export const matterCss = () => `
        letter-spacing:.18em; color:var(--ink-weak); border-bottom:.3mm solid var(--rule);
        padding-bottom:1.4mm; }
 .mrh.rh-r { text-align:right; }
-.mfolio { position:absolute; bottom:-14mm; font-family:'EB Garamond',serif; font-size:3mm; color:var(--ink-mid); }
+.mfolio { position:absolute; bottom:-14mm; font-family:'EB Garamond','Noto Serif JP',serif; font-size:3mm; color:var(--ink-mid); }
 .mf-r { right:0; } .mf-l { left:0; }
 .mh { font-size:6.4mm; line-height:calc(var(--lead)*2); font-weight:600; letter-spacing:.08em;
       margin-bottom:calc(var(--lead)*0.5); }
@@ -580,7 +580,7 @@ h3 { font-size:3.6mm; font-weight:600; letter-spacing:.06em; margin:calc(var(--l
                      margin-bottom:calc(var(--lead)*0.8); }
 .lg-note { font-size:2.8mm; line-height:calc(var(--lead)*0.86); color:var(--ink-mid); margin-top:2mm; }
 .dots { flex:1; border-bottom:.15mm dotted var(--rule); margin:0 1.5mm; transform:translateY(-1mm); }
-.tp2, .co-p { font-family:'EB Garamond',serif; font-size:2.9mm; color:var(--ink-mid); }
+.tp2, .co-p { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.9mm; color:var(--ink-mid); }
 a.xl { color:inherit; text-decoration:none; }
 
 /* 表紙 */
@@ -590,12 +590,12 @@ a.xl { color:inherit; text-decoration:none; }
 .cv-bands span { flex:1; background:var(--c); color:#f6f4ee; display:flex; flex-direction:column;
                  justify-content:flex-end; align-items:center; padding-bottom:2.6mm;
                  font-size:2.4mm; letter-spacing:.14em; }
-.cv-bands i { font-style:normal; font-family:'EB Garamond',serif; font-size:4.4mm; margin-bottom:1mm; }
+.cv-bands i { font-style:normal; font-family:'EB Garamond','Noto Serif JP',serif; font-size:4.4mm; margin-bottom:1mm; }
 .cv-mid { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;
           padding:0 24mm; }
 .cv-rule { width:100%; height:.5mm; background:#1b1b1a; }
 .cv-title { font-size:17mm; line-height:1.25; font-weight:600; letter-spacing:.14em; margin:9mm 0 4mm; }
-.cv-en { font-family:'EB Garamond',serif; font-size:4mm; letter-spacing:.36em; color:#5c5a54; margin-bottom:3mm; }
+.cv-en { font-family:'EB Garamond','Noto Serif JP',serif; font-size:4mm; letter-spacing:.36em; color:#5c5a54; margin-bottom:3mm; }
 .cv-sub { font-size:3.4mm; letter-spacing:.2em; color:#5c5a54; margin-bottom:9mm; }
 .cv-foot { text-align:center; padding-bottom:18mm; font-size:3.4mm; letter-spacing:.2em; }
 .cv-imp { font-size:2.9mm; color:#5c5a54; margin-top:2mm; }
@@ -604,7 +604,7 @@ a.xl { color:inherit; text-decoration:none; }
 .tp { display:flex; flex-direction:column; align-items:center; padding-top:52mm; text-align:center; }
 .tp-mark svg { width:34mm; height:34mm; }
 .tp h1 { font-size:11mm; line-height:1.4; font-weight:600; letter-spacing:.16em; margin:12mm 0 5mm; }
-.tp-en { font-family:'EB Garamond',serif; font-size:3.4mm; letter-spacing:.3em; color:var(--ink-mid); line-height:2; }
+.tp-en { font-family:'EB Garamond','Noto Serif JP',serif; font-size:3.4mm; letter-spacing:.3em; color:var(--ink-mid); line-height:2; }
 .tp-en span { font-size:2.6mm; letter-spacing:.22em; }
 .tp-line { width:46mm; height:.4mm; background:var(--ink); margin:14mm 0 6mm; }
 .tp-pub { font-size:3.6mm; letter-spacing:.3em; }
@@ -617,12 +617,12 @@ a.xl { color:inherit; text-decoration:none; }
 .toc-cat { break-inside:avoid; margin-bottom:calc(var(--lead)*0.9); }
 .toc-ch { display:flex; align-items:baseline; gap:2mm; border-bottom:.4mm solid var(--c);
           padding-bottom:1mm; margin-bottom:1.4mm; }
-.toc-n { font-family:'EB Garamond',serif; font-size:4mm; color:var(--c); }
+.toc-n { font-family:'EB Garamond','Noto Serif JP',serif; font-size:4mm; color:var(--c); }
 .toc-j { font-size:3.3mm; font-weight:600; letter-spacing:.06em; }
 .toc-c { margin-left:auto; font-size:2.4mm; color:var(--ink-weak); }
 .toc ul { list-style:none; }
 .toc li a { display:flex; align-items:baseline; font-size:2.9mm; line-height:calc(var(--lead)*0.86); }
-.tn { font-family:'EB Garamond',serif; font-size:2.6mm; color:var(--ink-weak); width:6mm; }
+.tn { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.6mm; color:var(--ink-weak); width:6mm; }
 
 /* 序 */
 .prf { width:calc(var(--col)*5 + var(--gutter)*4); }
@@ -662,7 +662,7 @@ table.src-t td { font-size:2.75mm; line-height:calc(var(--lead)*0.8); padding:.7
 .lgc { display:flex; align-items:baseline; gap:2.4mm; font-size:2.9mm;
        line-height:calc(var(--lead)*0.9); position:relative; padding-left:9mm; }
 .lgc-b { position:absolute; left:0; top:1.2mm; width:6mm; height:3mm; background:var(--c); opacity:.75; }
-.lgc-n { font-family:'EB Garamond',serif; color:var(--c); width:8mm; }
+.lgc-n { font-family:'EB Garamond','Noto Serif JP',serif; color:var(--c); width:8mm; }
 .lgc-c { margin-left:auto; font-size:2.4mm; color:var(--ink-weak); }
 
 /* 全体相関図 */
@@ -672,20 +672,20 @@ table.src-t td { font-size:2.75mm; line-height:calc(var(--lead)*0.8); padding:.7
           margin-top:calc(var(--lead)*1); border-top:.4mm solid var(--ink); padding-top:2.4mm; }
 .mdk { display:flex; align-items:baseline; gap:2mm; font-size:2.8mm; line-height:calc(var(--lead)*0.9); }
 .mdk-b { width:5mm; height:2.6mm; background:var(--c); opacity:.75; flex:none; }
-.mdk-n { font-family:'EB Garamond',serif; color:var(--c); width:7mm; }
-.mdk-r { margin-left:auto; font-family:'EB Garamond',serif; font-size:2.5mm; color:var(--ink-weak); }
+.mdk-n { font-family:'EB Garamond','Noto Serif JP',serif; color:var(--c); width:7mm; }
+.mdk-r { margin-left:auto; font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.5mm; color:var(--ink-weak); }
 table.mx { border-collapse:collapse; width:100%; }
 table.mx th { font-size:2.5mm; font-weight:400; text-align:left; color:var(--ink-mid); padding:.8mm 1.2mm; }
-table.mx thead th { text-align:center; font-family:'EB Garamond',serif; font-size:3mm; color:var(--c); }
+table.mx thead th { text-align:center; font-family:'EB Garamond','Noto Serif JP',serif; font-size:3mm; color:var(--c); }
 table.mx tbody th { color:var(--c); width:34mm; }
-table.mx td { text-align:center; font-family:'EB Garamond',serif; font-size:2.9mm;
+table.mx td { text-align:center; font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.9mm;
               padding:.8mm 0; border:.15mm solid var(--rule); }
 table.mx td.mx-d { outline:.35mm solid var(--ink); outline-offset:-.35mm; }
 .mx-s { color:var(--ink-weak); }
 .md-top { list-style:none; columns:2; column-gap:var(--gutter); font-size:2.9mm; }
 .md-top li { display:flex; align-items:baseline; gap:1.6mm; line-height:calc(var(--lead)*0.86); }
-.md-top li b { margin-left:auto; font-family:'EB Garamond',serif; }
-.mdn, .dln { font-family:'EB Garamond',serif; font-size:2.4mm; color:#fbfaf6; background:var(--c);
+.md-top li b { margin-left:auto; font-family:'EB Garamond','Noto Serif JP',serif; font-weight:400; }
+.mdn, .dln { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.4mm; color:#fbfaf6; background:var(--c);
              width:4.4mm; height:4.4mm; border-radius:50%; display:inline-flex;
              align-items:center; justify-content:center; flex:none; }
 
@@ -707,15 +707,15 @@ table.mx td.mx-d { outline:.35mm solid var(--ink); outline-offset:-.35mm; }
 table.ch { width:100%; border-collapse:collapse; }
 table.ch td { vertical-align:top; padding:.9mm 0; border-bottom:.15mm solid var(--rule); font-size:2.85mm;
               line-height:calc(var(--lead)*0.8); }
-td.cy { width:12mm; font-family:'EB Garamond',serif; color:var(--ink-mid); }
+td.cy { width:12mm; font-family:'EB Garamond','Noto Serif JP',serif; color:var(--ink-mid); }
 td.cr { width:20mm; text-align:right; }
-a.xn { font-family:'EB Garamond',serif; font-size:2.5mm; color:var(--ink-weak); margin-left:1.2mm; }
+a.xn { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.5mm; color:var(--ink-weak); margin-left:1.2mm; }
 
 /* 分類扉 */
 .ct-page { padding-top:56mm; }
-.ct-n { font-family:'EB Garamond',serif; font-size:26mm; line-height:1; color:var(--c); letter-spacing:.06em; }
+.ct-n { font-family:'EB Garamond','Noto Serif JP',serif; font-size:26mm; line-height:1; color:var(--c); letter-spacing:.06em; }
 .ct-j { font-size:12mm; line-height:1.4; font-weight:600; letter-spacing:.12em; margin-top:4mm; }
-.ct-en { font-family:'EB Garamond',serif; font-size:3.2mm; letter-spacing:.3em; color:var(--ink-weak); }
+.ct-en { font-family:'EB Garamond','Noto Serif JP',serif; font-size:3.2mm; letter-spacing:.3em; color:var(--ink-weak); }
 .ct-rule { width:var(--frame-w); height:.6mm; background:var(--c); margin:8mm 0 4mm; }
 .ct-count { font-size:3.2mm; letter-spacing:.2em; color:var(--ink-mid); }
 .ct-note { font-size:3mm; line-height:var(--lead); margin-top:calc(var(--lead)*1.2); width:calc(var(--col)*4 + var(--gutter)*3); }
@@ -727,7 +727,7 @@ a.xn { font-family:'EB Garamond',serif; font-size:2.5mm; color:var(--ink-weak); 
 .ctt-r > span:first-child { width:17mm; flex:none; }
 .ctt-bar { flex:1; height:2mm; background:#e6e3da; }
 .ctt-bar i { display:block; height:100%; background:var(--c); opacity:.8; }
-.ctt-r b { font-family:'EB Garamond',serif; font-weight:400; width:5mm; text-align:right; }
+.ctt-r b { font-family:'EB Garamond','Noto Serif JP',serif; font-weight:400; width:5mm; text-align:right; }
 .co-dia svg { width:100%; height:auto; display:block; }
 
 /* 分類の見開き右頁 */
@@ -736,7 +736,7 @@ a.xn { font-family:'EB Garamond',serif; font-size:2.5mm; color:var(--ink-weak); 
 .co-item { display:flex; align-items:center; gap:2.4mm; border-bottom:.15mm solid var(--rule); padding:1.2mm 0; }
 .co-emb svg { width:9mm; height:9mm; display:block; }
 .co-t b { font-size:2.9mm; font-weight:600; display:block; }
-.co-t i { font-family:'EB Garamond',serif; font-style:normal; font-size:2.2mm;
+.co-t i { font-family:'EB Garamond','Noto Serif JP',serif; font-style:normal; font-size:2.2mm;
           letter-spacing:.18em; color:var(--ink-weak); display:block; }
 .co-p { margin-left:auto; }
 .co-rel { list-style:none; columns:2; column-gap:var(--gutter); font-size:2.8mm; }
@@ -749,9 +749,9 @@ table.dt { width:100%; border-collapse:collapse; }
 table.dt th { font-size:2.5mm; letter-spacing:.12em; color:var(--ink-weak); text-align:left;
               border-bottom:.4mm solid var(--ink); padding-bottom:1mm; font-weight:400; }
 table.dt td { font-size:2.85mm; padding:1.05mm 0; border-bottom:.15mm solid var(--rule); }
-.dt-n { width:8mm; font-family:'EB Garamond',serif; color:var(--c); }
+.dt-n { width:8mm; font-family:'EB Garamond','Noto Serif JP',serif; color:var(--c); }
 .dt-f { width:44mm; }
-.dt-x { font-family:'EB Garamond',serif; font-size:2.6mm; color:var(--ink-mid); }
+.dt-x { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.6mm; color:var(--ink-mid); }
 
 /* 索引 */
 .pi, .gi { columns:2; column-gap:var(--gutter); }

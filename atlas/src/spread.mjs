@@ -38,7 +38,13 @@ const relBase = (id) => {
 // そこで一度組んで実測し、余白を関係図の丈に足し戻す。
 // 節点が増えるのではなく、節点が大きくなるだけなので、
 // 「空欄が何かの欠落を示す」という誤読は生じない。
-const relHeight = (id) => Math.min(relBase(id) + (fit[id] ?? 0), 86);
+// 実測した余白をそのまま足すと、関係が二件の項で図が横に伸びきり、
+// 箱の天地が空く。節点の数に応じた上限で頭を打たせる。
+// 打ち止めで余った分は、下に溜めずに欄の間へ均等に配る（下の CSS）。
+const relHeight = (id) => {
+  const n = edgesOf(id).length;
+  return Math.min(relBase(id) + (fit[id] ?? 0), 34 + n * 6.5, 86);
+};
 
 // 小口の帯。分類ごとに天地の位置を変える。
 export function edgeTab(cat, isRecto) {
@@ -164,15 +170,15 @@ export const spreadCss = () => `
       border-bottom:.5mm solid var(--c); padding-bottom:1.4mm; }
 .rh-cat { color:var(--c); font-weight:600; }
 .rh-name { margin-left:4mm; }
-.rh-folio { margin-left:auto; font-family:'EB Garamond',serif; font-size:3mm; color:var(--ink-mid); }
+.rh-folio { margin-left:auto; font-family:'EB Garamond','Noto Serif JP',serif; font-size:3mm; color:var(--ink-mid); }
 .rh-l .rh-folio { order:-1; margin-left:0; margin-right:4mm; }
 .rh-l .rh-cat { margin-left:0; }
 
 /* ── 左頁 ── */
 .plate-head { align-items:flex-end; margin-bottom:calc(var(--lead)*1); }
 .plate-label { display:flex; flex-direction:column; gap:1mm; }
-.pl-num { font-family:'EB Garamond',serif; font-size:9mm; line-height:9mm; color:var(--c); letter-spacing:.04em; }
-.pl-en { font-family:'EB Garamond',serif; font-size:2.9mm; letter-spacing:.28em; color:var(--ink-weak); }
+.pl-num { font-family:'EB Garamond','Noto Serif JP',serif; font-size:9mm; line-height:9mm; color:var(--c); letter-spacing:.04em; }
+.pl-en { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.9mm; letter-spacing:.28em; color:var(--ink-weak); }
 .plate-emblem svg { width:22mm; height:22mm; display:block; margin-left:auto; }
 .plate-main { width:var(--frame-w); }
 .plate-main svg { width:100%; height:auto; display:block; }
@@ -185,13 +191,13 @@ export const spreadCss = () => `
 /* ── 右頁 ──
    引用は絶対配置にしない。関係図の丈が組織ごとに違うので、
    絶対配置だと関係の多い組織で引用と衝突する。
-   縦の流れに置き、余った分を引用の上に寄せる。 */
-.recto .frame { display:flex; flex-direction:column; }
+   縦の流れに置き、余った分は欄の間へ均等に配る。 */
+.recto .frame { display:flex; flex-direction:column; justify-content:space-between; }
 
 .rec-name h1 { font-size:7.4mm; line-height:calc(var(--lead)*1.75); font-weight:600; letter-spacing:.04em; }
 .draft { font-style:normal; font-size:2.6mm; color:#a8442e; border:.25mm solid #a8442e;
          padding:0 .8mm; margin-left:2mm; vertical-align:2.4mm; }
-.rec-en { font-family:'EB Garamond',serif; font-size:3.1mm; letter-spacing:.3em; color:var(--ink-weak); }
+.rec-en { font-family:'EB Garamond','Noto Serif JP',serif; font-size:3.1mm; letter-spacing:.3em; color:var(--ink-weak); }
 .rec-alt { font-size:2.7mm; color:var(--ink-mid); margin-top:1mm; }
 
 .rec-tags { margin:calc(var(--lead)*1) 0 calc(var(--lead)*0.75);
@@ -229,7 +235,7 @@ export const spreadCss = () => `
 .relbox { border:.2mm solid var(--rule); background:#faf9f5; padding:1mm; }
 .relbox svg { width:100%; height:auto; display:block; }
 
-.rec-quote { margin-top:auto; width:var(--frame-w);
+.rec-quote { width:var(--frame-w);
              border-top:.4mm solid var(--c); padding-top:2mm;
              font-size:3.4mm; line-height:calc(var(--lead)*1.2); text-indent:0; }
 .rec-quote::before { content:'「'; } .rec-quote::after { content:'」'; }

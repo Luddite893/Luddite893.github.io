@@ -72,7 +72,9 @@ export function egoDiagram(id, { w = 132, h = 74 } = {}) {
   let out = '';
 
   rels.forEach((rel, i) => {
-    // 上下に振り分ける。真横は名前が長くなるので避ける。
+    // 真上から時計回りに等分し、偶数個のときは半目盛りずらす。
+    // ずらさないと二件の項で節点が真上と真下に並び、横に細長い箱の中で
+    // 上下の縁に貼りついてしまう。箱は横長なので、横に振るのが正しい。
     const a = (-90 + (360 / n) * i + (n % 2 ? 0 : 180 / n)) * Math.PI / 180;
     const x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry;
     const k = KINDS[rel.kind];
@@ -88,9 +90,10 @@ export function egoDiagram(id, { w = 132, h = 74 } = {}) {
       + `stroke="${INK}" stroke-width="${k.w}" fill="none"${k.dash ? ` stroke-dasharray="${k.dash}"` : ''}/>`;
     out += relMark(rel.kind, (x0 + x1) / 2, (y0 + y1) / 2, ang);
     const f = byId[rel.other];
-    out += `<g transform="translate(${(x - R).toFixed(2)} ${(y - R).toFixed(2)}) scale(${(R * 2 / 120).toFixed(4)})">`
+    // 節点そのものが「その組織の名」である。ここから該当項へ飛ばす。
+    out += `<a data-to="${f.id}"><g transform="translate(${(x - R).toFixed(2)} ${(y - R).toFixed(2)}) scale(${(R * 2 / 120).toFixed(4)})">`
       + emblem(f.emblem, { scale: cal[f.id] ?? 1, extinct: f.extinct, color: catOf(rel.other).color }).replace(/<svg[^>]*>|<\/svg>/g, '')
-      + `</g>`;
+      + `</g></a>`;
   });
 
   const me = byId[id];
@@ -188,9 +191,9 @@ export function masterDiagram({ size = 900 } = {}) {
     const p = pos[o.f.id];
     const r = size * 0.0165;
     out += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${(r * 1.34).toFixed(1)}" fill="#eceae4"/>`;
-    out += `<g transform="translate(${(p.x - r).toFixed(2)} ${(p.y - r).toFixed(2)}) scale(${(r * 2 / 120).toFixed(5)})">`
+    out += `<a data-to="${o.f.id}"><g transform="translate(${(p.x - r).toFixed(2)} ${(p.y - r).toFixed(2)}) scale(${(r * 2 / 120).toFixed(5)})">`
       + emblem(o.f.emblem, { scale: cal[o.f.id] ?? 1, extinct: o.f.extinct }).replace(/<svg[^>]*>|<\/svg>/g, '')
-      + `</g>`;
+      + `</g></a>`;
 
     // 敵対の次数を刻みで外周に出す。線を数えずに四面楚歌が分かる。
     const deg = hostileDegree(o.f.id);
@@ -271,9 +274,9 @@ export function catDiagram(catId, { w = 174, h = 118 } = {}) {
   const node = (id, x, y, r, color) => {
     const f = byId[id];
     return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 0.9).toFixed(1)}" fill="#f4f2ec"/>`
-      + `<g transform="translate(${(x - r).toFixed(2)} ${(y - r).toFixed(2)}) scale(${(r * 2 / 120).toFixed(4)})">`
+      + `<a data-to="${id}"><g transform="translate(${(x - r).toFixed(2)} ${(y - r).toFixed(2)}) scale(${(r * 2 / 120).toFixed(4)})">`
       + emblem(f.emblem, { scale: cal[id] ?? 1, extinct: f.extinct, color }).replace(/<svg[^>]*>|<\/svg>/g, '')
-      + `</g>`;
+      + `</g></a>`;
   };
 
   mine.forEach((f, i) => {

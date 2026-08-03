@@ -1,3 +1,5 @@
-node_modules/
-out/proof-cat-*.png
-out/shot-*.png
+out/*-raw.pdf
+out/links-*.json
+out/book*.html
+out/spreads.html
+out/proof-*.html
