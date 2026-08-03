@@ -51,15 +51,23 @@ FIX = {
     0x2215: 0xFF0F,   # ∕  → ／  除算記号 → 全角スラッシュ
     0x2EA0: 0x6C11,   # ⺠ → 民   部首補助。NFKC は何もしない
     0x2ED1: 0x9577,   # ⻑ → 長   同上
+    0x2EC4: 0x897F,   # ⻄ → 西   同上
+    0x2ED8: 0x9752,   # ⻘ → 青   同上
     0x2EEF: 0x7ADC,   # ⻯ → 竜   同上。龍ではなく竜が本文の字
     0x6236: 0x6238,   # 戶 → 戸   旧字形
 }
 
 
 def _canon_char(c: str) -> str:
-    """正規化してから表を当てる。表を先に当てると ⼾ が拾えない。"""
-    if 0x2E80 <= ord(c) <= 0x2FDF:
+    """正規化してから表を当てる。表を先に当てると ⼾ が拾えない。
+
+    合字（ﬁ ﬂ など）は一字が二字に開くので、戻り値は文字列とする。
+    """
+    o = ord(c)
+    if 0x2E80 <= o <= 0x2FDF or 0xFB00 <= o <= 0xFB4F:
         c = unicodedata.normalize("NFKC", c)
+    if len(c) != 1:
+        return c
     return chr(FIX.get(ord(c), ord(c)))
 
 
