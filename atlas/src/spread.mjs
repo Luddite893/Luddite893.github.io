@@ -56,7 +56,7 @@ export function edgeTab(cat, isRecto) {
 }
 
 // 柱。分類色の細い罫と、分類名・組織名。
-const runningHead = (f, c, isRecto, folio) => `
+export const runningHead = (f, c, isRecto, folio) => `
   <div class="rh ${isRecto ? 'rh-r' : 'rh-l'}" style="--c:${c.color}">
     <span class="rh-cat">${c.n}　${c.ja}</span>
     <span class="rh-name">${f.ja}</span>
@@ -64,7 +64,7 @@ const runningHead = (f, c, isRecto, folio) => `
   </div>`;
 
 // ── 左頁（図版面） ───────────────────────────────
-function figurePage(f, c, folio, spec) {
+export function figurePage(f, c, folio, spec) {
   const S = { scale: cal[f.id] ?? 1, extinct: f.extinct };
   const cuts = (spec.cuts ?? ['sword', 'shield', 'banner']).slice(0, 3);
   return `<section class="sheet verso" data-id="${f.id}">
