@@ -55,7 +55,7 @@ export const cover = () => sheet('recto', `
       <div class="cv-rule"></div>
       <h1 class="cv-title">タムリエル勢力誌</h1>
       <div class="cv-en">A SURVEY OF THE POWERS OF TAMRIEL</div>
-      <div class="cv-sub">スカイリム州所在の四十九組織　図版四百点</div>
+      <div class="cv-sub">スカイリム州所在の四十九組織　図版四百四十一点</div>
       <div class="cv-rule"></div>
     </div>
     <div class="cv-foot">
