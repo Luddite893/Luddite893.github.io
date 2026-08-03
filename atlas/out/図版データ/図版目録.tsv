@@ -1,0 +1,50 @@
+項番	名称	欧字名	分類	分類色	主図版の構築物	小カット	人物図版数
+1	同胞団	THE COMPANIONS	I 職能結社	#8a6f2e	city	axe・shield・anvil	4
+2	盗賊ギルド	THE THIEVES GUILD	I 職能結社	#8a6f2e	crypt	lockpick・markSign・purse	3
+3	ナイチンゲール	THE NIGHTINGALES	I 職能結社	#8a6f2e	stones	mask・amulet・key	3
+4	闇の一党	THE DARK BROTHERHOOD	I 職能結社	#8a6f2e	crypt	dagger・phial・contract	3
+5	ウィンターホールド大学	THE COLLEGE OF WINTERHOLD	I 職能結社	#8a6f2e	college	staff・book・soulgem	4
+6	吟遊詩人の大学	THE BARDS COLLEGE	I 職能結社	#8a6f2e	keep	lute・drum・flute	3
+7	ブレイズ	THE BLADES	I 職能結社	#8a6f2e	monastery	sword・tablet・scroll	3
+8	ドーンガード	THE DAWNGUARD	I 職能結社	#8a6f2e	fort	bow・shield・torch	3
+9	ヴォルキハル一族	THE VOLKIHAR CLAN	I 職能結社	#8a6f2e	keep	chalice・fang・ring	3
+10	グレイビアード	THE GREYBEARDS	I 職能結社	#8a6f2e	monastery	bell・tablet・scroll	3
+11	帝国軍	THE IMPERIAL LEGION	II 国家・軍事	#7c2b28	fort	helm・sword・banner	3
+12	ストームクローク	THE STORMCLOAKS	II 国家・軍事	#7c2b28	longhouse	axe・cuirass・banner	3
+13	サルモール	THE THALMOR	II 国家・軍事	#7c2b28	tower	scroll・key・manacles	3
+14	ペントゥス・オクラトゥス	PENITUS OCULATUS	II 国家・軍事	#7c2b28	gatehouse	helm・letter・dagger	3
+15	ムート	THE MOOT	II 国家・軍事	#7c2b28	arch	crown・scales・seal	3
+16	東帝都社	THE EAST EMPIRE COMPANY	II 国家・軍事	#7c2b28	dock	crate・ledger・anchor	3
+17	シルバーハンド	THE SILVER HAND	III 敵対組織	#8d5a2b	palisade	ingot・sword・hide	3
+18	ステンダールの守人	THE VIGIL OF STENDARR	III 敵対組織	#8d5a2b	hut	mace・amulet・censer	3
+19	フォースウォーン	THE FORSWORN	III 敵対組織	#8d5a2b	camp	antlerCut・boneCut・herb	3
+20	サイジック会	THE PSIJIC ORDER	III 敵対組織	#8d5a2b	tower	staff・gem・hourglass	3
+21	サイノッド	THE SYNOD	III 敵対組織	#8d5a2b	ruin	staff・lantern・tablet	3
+22	ウィスパーズ	THE WHISPERS	III 敵対組織	#8d5a2b	ruin	letter・key・coin	3
+23	モラグ・トング	THE MORAG TONG	III 敵対組織	#8d5a2b	crypt	dagger・contract・mask	3
+24	アリキール	THE ALIK'R	III 敵対組織	#8d5a2b	wagon	sword・purse・letter	3
+25	サマーセットの影	THE SHADOWS OF SUMMERSET	III 敵対組織	#8d5a2b	forest	dagger・rope・markSign	3
+26	ブラック・ブライア家	THE BLACK-BRIAR	IV 商業・名家	#2f5540	city	potion・coin・ledger	3
+27	シルバー・ブラッド家	THE SILVER-BLOOD	IV 商業・名家	#2f5540	mine	pickaxe・ingot・manacles	3
+28	バトル・ボーン家	THE BATTLE-BORN	IV 商業・名家	#2f5540	keep	cuirass・coin・banner	3
+29	グレイ・メーン家	THE GRAY-MANE	IV 商業・名家	#2f5540	hut	smithHammer・anvil・tongs	3
+30	九大神聖堂	THE TEMPLE OF THE NINE DIVINES	V 宗教・信仰	#2c4470	temple	chalice・book・crown	3
+31	アーリエルの聖堂	THE CHANTRY OF AURI-EL	V 宗教・信仰	#2c4470	monastery	bow・bell・feather	3
+32	モスプリースト	THE ORDER OF THE MOTH	V 宗教・信仰	#2c4470	tower	scroll・quill・phial	3
+33	トリビュナル寺院	THE TRIBUNAL TEMPLE	V 宗教・信仰	#2c4470	temple	chalice・mask・censer	3
+34	ナミラ信者	THE CULT OF NAMIRA	VI 秘教・カルト	#43304c	cave	chalice・boneCut・skull	3
+35	ミラークのカルト	THE CULT OF MIRAAK	VI 秘教・カルト	#43304c	stones	mask・tablet・fungus	3
+36	ドラゴン教団	THE DRAGON CULT	VI 秘教・カルト	#43304c	barrow	mask・torch・gate	3
+37	グレンモリルの魔女	THE GLENMORIL WITCHES	VI 秘教・カルト	#43304c	cave	herb・mortar・claw	3
+38	神話の夜明け残党	THE REMNANTS OF THE MYTHIC DAWN	VI 秘教・カルト	#43304c	ruin	book・brazier・contract	3
+39	ペライトの信者	THE CULT OF PERYITE	VI 秘教・カルト	#43304c	altar	phial・censer・skull	3
+40	理想の支配者	THE IDEAL MASTERS	VI 秘教・カルト	#43304c	stones	soulgem・chain・contract	3
+41	各デイドラ王の信徒団	THE CULTS OF THE DAEDRIC PRINCES	VI 秘教・カルト	#43304c	altar	brazier・dagger・mask	3
+42	スカール族	THE SKAAL	VII 部族・辺境・その他	#6b563a	hut	drum・herb・hide	3
+43	ハウス・レドラン	HOUSE REDORAN	VII 部族・辺境・その他	#6b563a	gatehouse	cuirass・spear・bell	3
+44	ハウス・テルヴァンニ	HOUSE TELVANNI	VII 部族・辺境・その他	#6b563a	mushroom	potion・scroll・book	3
+45	オークの砦	THE ORC STRONGHOLDS	VII 部族・辺境・その他	#6b563a	palisade	smithHammer・warhammer・hide	3
+46	キャジートのキャラバン	THE KHAJIIT CARAVANS	VII 部族・辺境・その他	#6b563a	wagon	crate・coin・amulet	3
+47	リークリング族	THE RIEKLINGS	VII 部族・辺境・その他	#6b563a	camp	spear・boneCut・fang	3
+48	山賊諸派	THE BANDIT CLANS	VII 部族・辺境・その他	#6b563a	ruin	sword・purse・gate	3
+49	アルドゥインの竜群	THE DRAGONS OF ALDUIN	VII 部族・辺境・その他	#6b563a	barrow	skull・fang・claw	3

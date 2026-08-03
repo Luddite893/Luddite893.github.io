@@ -3,3 +3,4 @@ out/links-*.json
 out/book*.html
 out/spreads.html
 out/proof-*.html
+out/*.png
