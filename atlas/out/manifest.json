@@ -1,0 +1,1194 @@
+{
+ "pages": [
+  {
+   "n": 1,
+   "kind": "cover",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 2,
+   "kind": "blank",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 3,
+   "kind": "title",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 4,
+   "kind": "toc",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 5,
+   "kind": "toc",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 6,
+   "kind": "preface",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 7,
+   "kind": "preface",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 8,
+   "kind": "legend",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 9,
+   "kind": "legend",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 10,
+   "kind": "master",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 11,
+   "kind": "master",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 12,
+   "kind": "mapT",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 13,
+   "kind": "mapS",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 14,
+   "kind": "dist",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 15,
+   "kind": "dist",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 16,
+   "kind": "chron",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 17,
+   "kind": "chron",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 18,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 1
+  },
+  {
+   "n": 19,
+   "kind": "catOver",
+   "id": null,
+   "cat": 1
+  },
+  {
+   "n": 20,
+   "kind": "entryL",
+   "id": "companions",
+   "cat": null
+  },
+  {
+   "n": 21,
+   "kind": "entryR",
+   "id": "companions",
+   "cat": null
+  },
+  {
+   "n": 22,
+   "kind": "entryL",
+   "id": "thieves",
+   "cat": null
+  },
+  {
+   "n": 23,
+   "kind": "entryR",
+   "id": "thieves",
+   "cat": null
+  },
+  {
+   "n": 24,
+   "kind": "entryL",
+   "id": "nightingale",
+   "cat": null
+  },
+  {
+   "n": 25,
+   "kind": "entryR",
+   "id": "nightingale",
+   "cat": null
+  },
+  {
+   "n": 26,
+   "kind": "entryL",
+   "id": "brotherhood",
+   "cat": null
+  },
+  {
+   "n": 27,
+   "kind": "entryR",
+   "id": "brotherhood",
+   "cat": null
+  },
+  {
+   "n": 28,
+   "kind": "entryL",
+   "id": "winterhold",
+   "cat": null
+  },
+  {
+   "n": 29,
+   "kind": "entryR",
+   "id": "winterhold",
+   "cat": null
+  },
+  {
+   "n": 30,
+   "kind": "entryL",
+   "id": "bards",
+   "cat": null
+  },
+  {
+   "n": 31,
+   "kind": "entryR",
+   "id": "bards",
+   "cat": null
+  },
+  {
+   "n": 32,
+   "kind": "entryL",
+   "id": "blades",
+   "cat": null
+  },
+  {
+   "n": 33,
+   "kind": "entryR",
+   "id": "blades",
+   "cat": null
+  },
+  {
+   "n": 34,
+   "kind": "entryL",
+   "id": "dawnguard",
+   "cat": null
+  },
+  {
+   "n": 35,
+   "kind": "entryR",
+   "id": "dawnguard",
+   "cat": null
+  },
+  {
+   "n": 36,
+   "kind": "entryL",
+   "id": "volkihar",
+   "cat": null
+  },
+  {
+   "n": 37,
+   "kind": "entryR",
+   "id": "volkihar",
+   "cat": null
+  },
+  {
+   "n": 38,
+   "kind": "entryL",
+   "id": "greybeards",
+   "cat": null
+  },
+  {
+   "n": 39,
+   "kind": "entryR",
+   "id": "greybeards",
+   "cat": null
+  },
+  {
+   "n": 40,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 2
+  },
+  {
+   "n": 41,
+   "kind": "catOver",
+   "id": null,
+   "cat": 2
+  },
+  {
+   "n": 42,
+   "kind": "entryL",
+   "id": "legion",
+   "cat": null
+  },
+  {
+   "n": 43,
+   "kind": "entryR",
+   "id": "legion",
+   "cat": null
+  },
+  {
+   "n": 44,
+   "kind": "entryL",
+   "id": "stormcloaks",
+   "cat": null
+  },
+  {
+   "n": 45,
+   "kind": "entryR",
+   "id": "stormcloaks",
+   "cat": null
+  },
+  {
+   "n": 46,
+   "kind": "entryL",
+   "id": "thalmor",
+   "cat": null
+  },
+  {
+   "n": 47,
+   "kind": "entryR",
+   "id": "thalmor",
+   "cat": null
+  },
+  {
+   "n": 48,
+   "kind": "entryL",
+   "id": "penitus",
+   "cat": null
+  },
+  {
+   "n": 49,
+   "kind": "entryR",
+   "id": "penitus",
+   "cat": null
+  },
+  {
+   "n": 50,
+   "kind": "entryL",
+   "id": "moot",
+   "cat": null
+  },
+  {
+   "n": 51,
+   "kind": "entryR",
+   "id": "moot",
+   "cat": null
+  },
+  {
+   "n": 52,
+   "kind": "entryL",
+   "id": "eastempire",
+   "cat": null
+  },
+  {
+   "n": 53,
+   "kind": "entryR",
+   "id": "eastempire",
+   "cat": null
+  },
+  {
+   "n": 54,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 3
+  },
+  {
+   "n": 55,
+   "kind": "catOver",
+   "id": null,
+   "cat": 3
+  },
+  {
+   "n": 56,
+   "kind": "entryL",
+   "id": "silverhand",
+   "cat": null
+  },
+  {
+   "n": 57,
+   "kind": "entryR",
+   "id": "silverhand",
+   "cat": null
+  },
+  {
+   "n": 58,
+   "kind": "entryL",
+   "id": "vigilants",
+   "cat": null
+  },
+  {
+   "n": 59,
+   "kind": "entryR",
+   "id": "vigilants",
+   "cat": null
+  },
+  {
+   "n": 60,
+   "kind": "entryL",
+   "id": "forsworn",
+   "cat": null
+  },
+  {
+   "n": 61,
+   "kind": "entryR",
+   "id": "forsworn",
+   "cat": null
+  },
+  {
+   "n": 62,
+   "kind": "entryL",
+   "id": "psijic",
+   "cat": null
+  },
+  {
+   "n": 63,
+   "kind": "entryR",
+   "id": "psijic",
+   "cat": null
+  },
+  {
+   "n": 64,
+   "kind": "entryL",
+   "id": "synod",
+   "cat": null
+  },
+  {
+   "n": 65,
+   "kind": "entryR",
+   "id": "synod",
+   "cat": null
+  },
+  {
+   "n": 66,
+   "kind": "entryL",
+   "id": "whispers",
+   "cat": null
+  },
+  {
+   "n": 67,
+   "kind": "entryR",
+   "id": "whispers",
+   "cat": null
+  },
+  {
+   "n": 68,
+   "kind": "entryL",
+   "id": "moragtong",
+   "cat": null
+  },
+  {
+   "n": 69,
+   "kind": "entryR",
+   "id": "moragtong",
+   "cat": null
+  },
+  {
+   "n": 70,
+   "kind": "entryL",
+   "id": "alikr",
+   "cat": null
+  },
+  {
+   "n": 71,
+   "kind": "entryR",
+   "id": "alikr",
+   "cat": null
+  },
+  {
+   "n": 72,
+   "kind": "entryL",
+   "id": "shadows",
+   "cat": null
+  },
+  {
+   "n": 73,
+   "kind": "entryR",
+   "id": "shadows",
+   "cat": null
+  },
+  {
+   "n": 74,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 4
+  },
+  {
+   "n": 75,
+   "kind": "catOver",
+   "id": null,
+   "cat": 4
+  },
+  {
+   "n": 76,
+   "kind": "entryL",
+   "id": "blackbriar",
+   "cat": null
+  },
+  {
+   "n": 77,
+   "kind": "entryR",
+   "id": "blackbriar",
+   "cat": null
+  },
+  {
+   "n": 78,
+   "kind": "entryL",
+   "id": "silverblood",
+   "cat": null
+  },
+  {
+   "n": 79,
+   "kind": "entryR",
+   "id": "silverblood",
+   "cat": null
+  },
+  {
+   "n": 80,
+   "kind": "entryL",
+   "id": "battleborn",
+   "cat": null
+  },
+  {
+   "n": 81,
+   "kind": "entryR",
+   "id": "battleborn",
+   "cat": null
+  },
+  {
+   "n": 82,
+   "kind": "entryL",
+   "id": "graymane",
+   "cat": null
+  },
+  {
+   "n": 83,
+   "kind": "entryR",
+   "id": "graymane",
+   "cat": null
+  },
+  {
+   "n": 84,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 5
+  },
+  {
+   "n": 85,
+   "kind": "catOver",
+   "id": null,
+   "cat": 5
+  },
+  {
+   "n": 86,
+   "kind": "entryL",
+   "id": "ninedivines",
+   "cat": null
+  },
+  {
+   "n": 87,
+   "kind": "entryR",
+   "id": "ninedivines",
+   "cat": null
+  },
+  {
+   "n": 88,
+   "kind": "entryL",
+   "id": "auriel",
+   "cat": null
+  },
+  {
+   "n": 89,
+   "kind": "entryR",
+   "id": "auriel",
+   "cat": null
+  },
+  {
+   "n": 90,
+   "kind": "entryL",
+   "id": "moth",
+   "cat": null
+  },
+  {
+   "n": 91,
+   "kind": "entryR",
+   "id": "moth",
+   "cat": null
+  },
+  {
+   "n": 92,
+   "kind": "entryL",
+   "id": "tribunal",
+   "cat": null
+  },
+  {
+   "n": 93,
+   "kind": "entryR",
+   "id": "tribunal",
+   "cat": null
+  },
+  {
+   "n": 94,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 6
+  },
+  {
+   "n": 95,
+   "kind": "catOver",
+   "id": null,
+   "cat": 6
+  },
+  {
+   "n": 96,
+   "kind": "entryL",
+   "id": "namira",
+   "cat": null
+  },
+  {
+   "n": 97,
+   "kind": "entryR",
+   "id": "namira",
+   "cat": null
+  },
+  {
+   "n": 98,
+   "kind": "entryL",
+   "id": "miraak",
+   "cat": null
+  },
+  {
+   "n": 99,
+   "kind": "entryR",
+   "id": "miraak",
+   "cat": null
+  },
+  {
+   "n": 100,
+   "kind": "entryL",
+   "id": "dragoncult",
+   "cat": null
+  },
+  {
+   "n": 101,
+   "kind": "entryR",
+   "id": "dragoncult",
+   "cat": null
+  },
+  {
+   "n": 102,
+   "kind": "entryL",
+   "id": "glenmoril",
+   "cat": null
+  },
+  {
+   "n": 103,
+   "kind": "entryR",
+   "id": "glenmoril",
+   "cat": null
+  },
+  {
+   "n": 104,
+   "kind": "entryL",
+   "id": "mythicdawn",
+   "cat": null
+  },
+  {
+   "n": 105,
+   "kind": "entryR",
+   "id": "mythicdawn",
+   "cat": null
+  },
+  {
+   "n": 106,
+   "kind": "entryL",
+   "id": "peryite",
+   "cat": null
+  },
+  {
+   "n": 107,
+   "kind": "entryR",
+   "id": "peryite",
+   "cat": null
+  },
+  {
+   "n": 108,
+   "kind": "entryL",
+   "id": "idealmasters",
+   "cat": null
+  },
+  {
+   "n": 109,
+   "kind": "entryR",
+   "id": "idealmasters",
+   "cat": null
+  },
+  {
+   "n": 110,
+   "kind": "entryL",
+   "id": "daedriccults",
+   "cat": null
+  },
+  {
+   "n": 111,
+   "kind": "entryR",
+   "id": "daedriccults",
+   "cat": null
+  },
+  {
+   "n": 112,
+   "kind": "catTitle",
+   "id": null,
+   "cat": 7
+  },
+  {
+   "n": 113,
+   "kind": "catOver",
+   "id": null,
+   "cat": 7
+  },
+  {
+   "n": 114,
+   "kind": "entryL",
+   "id": "skaal",
+   "cat": null
+  },
+  {
+   "n": 115,
+   "kind": "entryR",
+   "id": "skaal",
+   "cat": null
+  },
+  {
+   "n": 116,
+   "kind": "entryL",
+   "id": "redoran",
+   "cat": null
+  },
+  {
+   "n": 117,
+   "kind": "entryR",
+   "id": "redoran",
+   "cat": null
+  },
+  {
+   "n": 118,
+   "kind": "entryL",
+   "id": "telvanni",
+   "cat": null
+  },
+  {
+   "n": 119,
+   "kind": "entryR",
+   "id": "telvanni",
+   "cat": null
+  },
+  {
+   "n": 120,
+   "kind": "entryL",
+   "id": "orcstrongholds",
+   "cat": null
+  },
+  {
+   "n": 121,
+   "kind": "entryR",
+   "id": "orcstrongholds",
+   "cat": null
+  },
+  {
+   "n": 122,
+   "kind": "entryL",
+   "id": "khajiitcaravans",
+   "cat": null
+  },
+  {
+   "n": 123,
+   "kind": "entryR",
+   "id": "khajiitcaravans",
+   "cat": null
+  },
+  {
+   "n": 124,
+   "kind": "entryL",
+   "id": "riekling",
+   "cat": null
+  },
+  {
+   "n": 125,
+   "kind": "entryR",
+   "id": "riekling",
+   "cat": null
+  },
+  {
+   "n": 126,
+   "kind": "entryL",
+   "id": "bandits",
+   "cat": null
+  },
+  {
+   "n": 127,
+   "kind": "entryR",
+   "id": "bandits",
+   "cat": null
+  },
+  {
+   "n": 128,
+   "kind": "entryL",
+   "id": "alduin",
+   "cat": null
+  },
+  {
+   "n": 129,
+   "kind": "entryR",
+   "id": "alduin",
+   "cat": null
+  },
+  {
+   "n": 130,
+   "kind": "doorTable",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 131,
+   "kind": "doorTable",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 132,
+   "kind": "peopleIndex",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 133,
+   "kind": "peopleIndex",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 134,
+   "kind": "generalIndex",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 135,
+   "kind": "generalIndex",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 136,
+   "kind": "notes",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 137,
+   "kind": "notes",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 138,
+   "kind": "notes",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 139,
+   "kind": "notes",
+   "id": null,
+   "cat": null
+  },
+  {
+   "n": 140,
+   "kind": "colophon",
+   "id": null,
+   "cat": null
+  }
+ ],
+ "folioOf": {
+  "companions": 21,
+  "thieves": 23,
+  "nightingale": 25,
+  "brotherhood": 27,
+  "winterhold": 29,
+  "bards": 31,
+  "blades": 33,
+  "dawnguard": 35,
+  "volkihar": 37,
+  "greybeards": 39,
+  "legion": 43,
+  "stormcloaks": 45,
+  "thalmor": 47,
+  "penitus": 49,
+  "moot": 51,
+  "eastempire": 53,
+  "silverhand": 57,
+  "vigilants": 59,
+  "forsworn": 61,
+  "psijic": 63,
+  "synod": 65,
+  "whispers": 67,
+  "moragtong": 69,
+  "alikr": 71,
+  "shadows": 73,
+  "blackbriar": 77,
+  "silverblood": 79,
+  "battleborn": 81,
+  "graymane": 83,
+  "ninedivines": 87,
+  "auriel": 89,
+  "moth": 91,
+  "tribunal": 93,
+  "namira": 97,
+  "miraak": 99,
+  "dragoncult": 101,
+  "glenmoril": 103,
+  "mythicdawn": 105,
+  "peryite": 107,
+  "idealmasters": 109,
+  "daedriccults": 111,
+  "skaal": 115,
+  "redoran": 117,
+  "telvanni": 119,
+  "orcstrongholds": 121,
+  "khajiitcaravans": 123,
+  "riekling": 125,
+  "bandits": 127,
+  "alduin": 129
+ },
+ "outline": [
+  {
+   "title": "扉",
+   "page": 3
+  },
+  {
+   "title": "目次",
+   "page": 4
+  },
+  {
+   "title": "序",
+   "page": 6
+  },
+  {
+   "title": "読み方・凡例",
+   "page": 8
+  },
+  {
+   "title": "全体相関図",
+   "page": 10
+  },
+  {
+   "title": "地図",
+   "page": 12
+  },
+  {
+   "title": "勢力分布図",
+   "page": 14
+  },
+  {
+   "title": "年表",
+   "page": 16
+  },
+  {
+   "title": "I　職能結社",
+   "page": 18,
+   "children": [
+    {
+     "title": "同胞団",
+     "page": 20
+    },
+    {
+     "title": "盗賊ギルド",
+     "page": 22
+    },
+    {
+     "title": "ナイチンゲール",
+     "page": 24
+    },
+    {
+     "title": "闇の一党",
+     "page": 26
+    },
+    {
+     "title": "ウィンターホールド大学",
+     "page": 28
+    },
+    {
+     "title": "吟遊詩人の大学",
+     "page": 30
+    },
+    {
+     "title": "ブレイズ",
+     "page": 32
+    },
+    {
+     "title": "ドーンガード",
+     "page": 34
+    },
+    {
+     "title": "ヴォルキハル一族",
+     "page": 36
+    },
+    {
+     "title": "グレイビアード",
+     "page": 38
+    }
+   ]
+  },
+  {
+   "title": "II　国家・軍事",
+   "page": 40,
+   "children": [
+    {
+     "title": "帝国軍",
+     "page": 42
+    },
+    {
+     "title": "ストームクローク",
+     "page": 44
+    },
+    {
+     "title": "サルモール",
+     "page": 46
+    },
+    {
+     "title": "ペントゥス・オクラトゥス",
+     "page": 48
+    },
+    {
+     "title": "ムート",
+     "page": 50
+    },
+    {
+     "title": "東帝都社",
+     "page": 52
+    }
+   ]
+  },
+  {
+   "title": "III　敵対組織",
+   "page": 54,
+   "children": [
+    {
+     "title": "シルバーハンド",
+     "page": 56
+    },
+    {
+     "title": "ステンダールの守人",
+     "page": 58
+    },
+    {
+     "title": "フォースウォーン",
+     "page": 60
+    },
+    {
+     "title": "サイジック会",
+     "page": 62
+    },
+    {
+     "title": "サイノッド",
+     "page": 64
+    },
+    {
+     "title": "ウィスパーズ",
+     "page": 66
+    },
+    {
+     "title": "モラグ・トング",
+     "page": 68
+    },
+    {
+     "title": "アリキール",
+     "page": 70
+    },
+    {
+     "title": "サマーセットの影",
+     "page": 72
+    }
+   ]
+  },
+  {
+   "title": "IV　商業・名家",
+   "page": 74,
+   "children": [
+    {
+     "title": "ブラック・ブライア家",
+     "page": 76
+    },
+    {
+     "title": "シルバー・ブラッド家",
+     "page": 78
+    },
+    {
+     "title": "バトル・ボーン家",
+     "page": 80
+    },
+    {
+     "title": "グレイ・メーン家",
+     "page": 82
+    }
+   ]
+  },
+  {
+   "title": "V　宗教・信仰",
+   "page": 84,
+   "children": [
+    {
+     "title": "九大神聖堂",
+     "page": 86
+    },
+    {
+     "title": "アーリエルの聖堂",
+     "page": 88
+    },
+    {
+     "title": "モスプリースト",
+     "page": 90
+    },
+    {
+     "title": "トリビュナル寺院",
+     "page": 92
+    }
+   ]
+  },
+  {
+   "title": "VI　秘教・カルト",
+   "page": 94,
+   "children": [
+    {
+     "title": "ナミラ信者",
+     "page": 96
+    },
+    {
+     "title": "ミラークのカルト",
+     "page": 98
+    },
+    {
+     "title": "ドラゴン教団",
+     "page": 100
+    },
+    {
+     "title": "グレンモリルの魔女",
+     "page": 102
+    },
+    {
+     "title": "神話の夜明け残党",
+     "page": 104
+    },
+    {
+     "title": "ペライトの信者",
+     "page": 106
+    },
+    {
+     "title": "理想の支配者",
+     "page": 108
+    },
+    {
+     "title": "各デイドラ王の信徒団",
+     "page": 110
+    }
+   ]
+  },
+  {
+   "title": "VII　部族・辺境・その他",
+   "page": 112,
+   "children": [
+    {
+     "title": "スカール族",
+     "page": 114
+    },
+    {
+     "title": "ハウス・レドラン",
+     "page": 116
+    },
+    {
+     "title": "ハウス・テルヴァンニ",
+     "page": 118
+    },
+    {
+     "title": "オークの砦",
+     "page": 120
+    },
+    {
+     "title": "キャジートのキャラバン",
+     "page": 122
+    },
+    {
+     "title": "リークリング族",
+     "page": 124
+    },
+    {
+     "title": "山賊諸派",
+     "page": 126
+    },
+    {
+     "title": "アルドゥインの竜群",
+     "page": 128
+    }
+   ]
+  },
+  {
+   "title": "門戸・排他関係一覧",
+   "page": 130
+  },
+  {
+   "title": "人物索引",
+   "page": 132
+  },
+  {
+   "title": "総索引",
+   "page": 134
+  },
+  {
+   "title": "追記欄",
+   "page": 136
+  },
+  {
+   "title": "奥付",
+   "page": 140
+  }
+ ],
+ "stats": {
+  "pages": 140,
+  "busts": 149,
+  "scenes": 49,
+  "cutKinds": 65,
+  "cutPlacements": 147
+ }
+}

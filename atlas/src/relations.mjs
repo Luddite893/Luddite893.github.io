@@ -88,7 +88,6 @@ export const edges = [
 
   // ── 商業・名家 ──
   ['graymane', 'battleborn', 'hostile'],
-  ['silverblood', 'forsworn', 'hostile'],
 
   // ── 宗教・信仰 ──
   ['ninedivines', 'daedriccults', 'hostile'],
@@ -106,7 +105,6 @@ export const edges = [
   ['mythicdawn', 'daedriccults', 'origin'],
   ['peryite', 'daedriccults', 'origin'],
   ['idealmasters', 'daedriccults', 'rival'],
-  ['glenmoril', 'forsworn', 'ally'],
 
   // ── 部族・辺境・その他 ──
   ['skaal', 'riekling', 'hostile'],

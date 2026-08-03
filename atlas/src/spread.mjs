@@ -146,6 +146,13 @@ export function spread(f, spec, folioL, folioR) {
   return figurePage(f, c, folioL, spec) + '\n' + infoPage(f, c, folioR);
 }
 
+// 一冊に組むときは左右を別々に受け取る。
+// 文字列を改行で割って取り出すと、図版面の中の改行で割れる。
+export function spreadPages(f, spec, folioL, folioR) {
+  const c = catOf(f);
+  return [figurePage(f, c, folioL, spec), infoPage(f, c, folioR)];
+}
+
 // ── 見開きの体裁 ───────────────────────────────
 export const spreadCss = () => `
 /* 小口の帯。分類ごとに天地を変える。閉じたとき七本の縞になる。 */

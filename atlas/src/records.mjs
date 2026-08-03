@@ -260,7 +260,7 @@ export const records = {
       { ja: 'サヴォス', race: 'elf', headgear: 'hood', hair: 'none', garment: 'robe', note: '学長' },
       { ja: 'ミラベル', race: 'human', headgear: 'none', hair: 'short', garment: 'robe', note: '教頭' },
       { ja: 'トルフディル', race: 'nord', headgear: 'none', hair: 'short', garment: 'robe', note: '破壊術の教師' },
-      { ja: 'アルゴニアン', race: 'argonian', headgear: 'none', hair: 'none', garment: 'robe', note: '書庫番' },
+      { ja: 'ウラグ', race: 'orc', headgear: 'none', hair: 'topknot', garment: 'robe', note: '書庫番' },
     ],
     quote: '海が街を持っていった。岩の上だけが残った。それだけのことだ。',
   },

@@ -216,3 +216,79 @@ export function masterDiagram({ size = 900 } = {}) {
   return `<svg class="master" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" `
     + `font-family="Noto Serif JP, serif"><defs>${defs}</defs>${out}</svg>`;
 }
+
+// ── 三　分類別の関係図（分類扉の右頁） ──────────────────
+// 全体相関図は円環だが、分類ごとの図で円環を繰り返しても意味がない。
+// ここで見たいのは「この分類の関係が、どこへ向かっているか」である。
+// だから上段にこの分類の組織、下段に相手を置く二部の図にする。
+// 上下に分ければ、分類の内側で閉じているか外へ出ているかが、線の形だけで判る。
+const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+
+export function catDiagram(catId, { w = 174, h = 118 } = {}) {
+  const mine = factions.filter((f) => f.cat === catId);
+  const rels = [];
+  for (const f of mine) for (const r of edgesOf(f.id)) {
+    if (byId[r.other].cat === catId && r.other < f.id) continue;   // 内側の関係は一度だけ
+    rels.push({ from: f.id, to: r.other, kind: r.kind, inner: byId[r.other].cat === catId });
+  }
+  const others = [...new Set(rels.filter((r) => !r.inner).map((r) => r.to))];
+  const idxOf = Object.fromEntries(mine.map((f, i) => [f.id, i]));
+  // 交差を減らす。相手は、繋がる相手の平均位置の順に並べる。
+  others.sort((a, b) => {
+    const m = (id) => {
+      const xs = rels.filter((r) => r.to === id).map((r) => idxOf[r.from]);
+      return xs.reduce((s, v) => s + v, 0) / (xs.length || 1);
+    };
+    return m(a) - m(b) || a.localeCompare(b);
+  });
+
+  const R = 6.2;
+  const yTop = h * 0.30, yBot = h * 0.71;
+  const px = (n, i) => (w / (n + 1)) * (i + 1);
+  const posTop = (id) => px(mine.length, idxOf[id]);
+  const posBot = (id) => px(others.length, others.indexOf(id));
+
+  let out = '';
+  for (const r of rels) {
+    const k = KINDS[r.kind];
+    if (r.inner) {
+      const x0 = posTop(r.from), x1 = posTop(r.to);
+      const lift = yTop - 10 - Math.abs(x1 - x0) * 0.06;
+      out += `<path d="M ${x0.toFixed(1)} ${(yTop - R).toFixed(1)} `
+        + `C ${x0.toFixed(1)} ${lift.toFixed(1)}, ${x1.toFixed(1)} ${lift.toFixed(1)}, `
+        + `${x1.toFixed(1)} ${(yTop - R).toFixed(1)}" fill="none" stroke="${INK}" `
+        + `stroke-width="${k.w}"${k.dash ? ` stroke-dasharray="${k.dash}"` : ''}/>`;
+    } else {
+      const x0 = posTop(r.from), x1 = posBot(r.to);
+      const my = (yTop + yBot) / 2;
+      out += `<path d="M ${x0.toFixed(1)} ${(yTop + R).toFixed(1)} `
+        + `C ${x0.toFixed(1)} ${my.toFixed(1)}, ${x1.toFixed(1)} ${my.toFixed(1)}, `
+        + `${x1.toFixed(1)} ${(yBot - R).toFixed(1)}" fill="none" stroke="${INK}" `
+        + `stroke-width="${k.w}"${k.dash ? ` stroke-dasharray="${k.dash}"` : ''} opacity="0.85"/>`;
+    }
+  }
+
+  const node = (id, x, y, r, color) => {
+    const f = byId[id];
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 0.9).toFixed(1)}" fill="#f4f2ec"/>`
+      + `<g transform="translate(${(x - r).toFixed(2)} ${(y - r).toFixed(2)}) scale(${(r * 2 / 120).toFixed(4)})">`
+      + emblem(f.emblem, { scale: cal[id] ?? 1, extinct: f.extinct, color }).replace(/<svg[^>]*>|<\/svg>/g, '')
+      + `</g>`;
+  };
+
+  mine.forEach((f, i) => {
+    const x = px(mine.length, i);
+    out += node(f.id, x, yTop, R, categories.find((c) => c.id === catId).color);
+    out += `<text x="${x.toFixed(1)}" y="${(yTop - R - 2.4).toFixed(1)}" transform="rotate(-52 ${x.toFixed(1)} ${(yTop - R - 2.4).toFixed(1)})" `
+      + `font-size="2.5" fill="#1b1b1a" letter-spacing="0.1">${clip(f.ja, 12)}</text>`;
+  });
+  others.forEach((id, i) => {
+    const x = px(others.length, i);
+    out += node(id, x, yBot, R * 0.82, catOf(id).color);
+    out += `<text x="${x.toFixed(1)}" y="${(yBot + R + 2.6).toFixed(1)}" transform="rotate(52 ${x.toFixed(1)} ${(yBot + R + 2.6).toFixed(1)})" `
+      + `font-size="2.3" fill="#5c5a54" letter-spacing="0.1">${clip(byId[id].ja, 11)}</text>`;
+  });
+
+  return `<svg class="catdia" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" `
+    + `font-family="Noto Serif JP, serif">${out}</svg>`;
+}
