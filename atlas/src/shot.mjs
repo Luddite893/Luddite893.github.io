@@ -6,8 +6,8 @@ const p = await b.newPage({ viewport:{width:1240,height:1600}, deviceScaleFactor
 await p.goto('file://' + out + (process.argv[2] || 'proof-emblems.html'), { waitUntil:'networkidle' });
 await p.evaluate(()=>document.fonts.ready);
 await p.waitForFunction(()=>document.body.dataset.measured==='1', null, {timeout:30000}).catch(()=>{});
-const bad = await p.evaluate(()=>[...document.querySelectorAll('.area')].map(e=>({id:e.dataset.area,pct:+e.dataset.pct})));
-console.log('面積率 外れ値:', bad.filter(x=>x.pct<18||x.pct>34).map(x=>`${x.id} ${x.pct}%`).join(' / ') || 'なし');
+const bad = await p.evaluate(()=>[...document.querySelectorAll('.area')].map(e=>({id:e.dataset.area,pct:+e.dataset.pct,ex:!!e.dataset.extinct})));
+console.log('面積率 外れ値:', bad.filter(x=>!x.ex&&(x.pct<18||x.pct>34)).map(x=>`${x.id} ${x.pct}%`).join(' / ') || 'なし');
 const v = bad.map(x=>x.pct).filter(Number.isFinite);
 console.log(`面積率 平均 ${(v.reduce((a,c)=>a+c,0)/v.length).toFixed(1)}%  最小 ${Math.min(...v)}%  最大 ${Math.max(...v)}%`);
 for (const [i, sec] of (await p.locator('section.cat').all()).entries()) {

@@ -1,8 +1,11 @@
 // 収録組織 49
 //
-// 仕様書 6 は「発注者側で確定済み」。ただし支給画像は IV の途中で切れており、
-// IV の 4 組織以降（計 20 組織）の名称を読み取れなかった。
-// 該当分は provisional: true を立ててある。差し替えは名称の書き換えだけで通る。
+// 仕様書 6 のとおり、発注者側で確定済みの 49 組織。全名称を確定版で保持する。
+//
+// extinct: true の組織には、紋章に打ち消しの横線を与える
+// （仕様書 8「滅亡した組織には、紋章に打ち消しの線など統一した記号を」を採用）。
+// 線は紋章の外郭を貫き、図象の上に乗る。図象側を削らないのは、
+// 滅んだのは組織であって、その徽章の意匠ではないからだ。
 //
 // 分類 I の名称について。原仕様の「加入可能ギルド」は、読者ではなく
 // 操作者から見た区分であり、他の 6 分類（血統・国籍・信仰・地縁）だけが
@@ -16,6 +19,7 @@ import {
   wing, antlers, tentacles, gear, book, tower, ship, lyre, crossbow, hammer,
   bone, spider, paw, flame, urn, rose, mask, tusk, crown, spiral, keyhole,
   pincer, standingStone, knot, chitin, scales, rotate, J, SEP,
+  sunDisc, mushroom, gem, axe, serpent, twinMoons, circle, poly, bar,
 } from './heraldry.mjs';
 
 export const categories = [
@@ -31,7 +35,7 @@ export const categories = [
     note: '公に容認された神格への信仰と、その祭祀を担う組織。' },
   { n: 'VI',  id: 6, ja: '秘教・カルト', en: 'MYSTERIA',                color: '#43304c', tone: '紫黒',
     note: '容認されざる神格に仕えるか、儀礼を秘匿する組織。' },
-  { n: 'VII', id: 7, ja: '部族・辺境',   en: 'GENTES EXTERAE',          color: '#6b563a', tone: '土色',
+  { n: 'VII', id: 7, ja: '部族・辺境・その他', en: 'GENTES EXTERAE',          color: '#6b563a', tone: '土色',
     note: '国家に属さず、血縁と土地によって成り立つ集団。' },
 ];
 
@@ -93,7 +97,7 @@ export const factions = [
   { id: 'synod', cat: 3, ja: 'サイノッド', en: 'THE SYNOD', alt: '',
     emblem: { charge: tower(), marks: eye({ r: 6, w: 13, h: 8 }) } },
   { id: 'whispers', cat: 3, ja: 'ウィスパーズ', en: 'THE WHISPERS', alt: '囁く者たち',
-    emblem: { charge: J(arc(41, 5, 205, 335), arc(31, 4.4, 216, 324), arc(21, 3.6, 228, 312)), marks: dots(0, 90, 270) } },
+    emblem: { charge: J(arc(41, 8.5, 200, 340), arc(29, 7.5, 212, 328), arc(17.5, 6.5, 226, 314)), marks: dots(0, 90, 270) } },
   { id: 'moragtong', cat: 3, ja: 'モラグ・トング', en: 'THE MORAG TONG', alt: '合法の暗殺者',
     emblem: { charge: pincer() } },
   { id: 'alikr', cat: 3, ja: 'アリキール', en: "THE ALIK'R", alt: '砂漠の傭兵',
@@ -102,61 +106,79 @@ export const factions = [
     emblem: { field: moon(40, 26), charge: eye({ r: 10, w: 21, h: 13 }) } },
 
   // ══ IV. 商業・名家 ═══════════════════════════════ 濃緑
-  { id: 'blackbriar', cat: 4, ja: 'ブラック＝ブライア家', en: 'THE BLACK-BRIAR', alt: '', provisional: true,
+  { id: 'blackbriar', cat: 4, ja: 'ブラック・ブライア家', en: 'THE BLACK-BRIAR', alt: 'リフテンの実権',
     emblem: { field: J(ring(41, 3.2), rays(14, 41, 48, 3)), charge: urn() } },
-  { id: 'silverblood', cat: 4, ja: 'シルバーブラッド家', en: 'THE SILVER-BLOOD', alt: '', provisional: true,
-    emblem: { charge: mountain(2, 88, 34), marks: 'M 34 24 L 86 24 L 86 42 L 78 42 L 78 34 L 42 34 L 42 42 L 34 42 Z M 55 42 L 65 42 L 65 66 L 55 66 Z' } },
-  { id: 'graymane', cat: 4, ja: 'グレイマーン家', en: 'THE GRAY-MANE', alt: '', provisional: true,
-    emblem: { charge: hammer(), marks: flame(30) } },
-  { id: 'battleborn', cat: 4, ja: 'バトル＝ボーン家', en: 'THE BATTLE-BORN', alt: '', provisional: true,
+  { id: 'silverblood', cat: 4, ja: 'シルバー・ブラッド家', en: 'THE SILVER-BLOOD', alt: 'マルカルスの主',
+    emblem: { charge: mountain(2, 88, 34),
+      marks: 'M 34 24 L 86 24 L 86 42 L 78 42 L 78 34 L 42 34 L 42 42 L 34 42 Z M 55 42 L 65 42 L 65 66 L 55 66 Z' } },
+  { id: 'battleborn', cat: 4, ja: 'バトル・ボーン家', en: 'THE BATTLE-BORN', alt: '帝国派の名家',
     emblem: { charge: J(rotate(38, bone()), rotate(-38, bone())), marks: baseBar(20, 96, 3.4) } },
+  { id: 'graymane', cat: 4, ja: 'グレイ・メーン家', en: 'THE GRAY-MANE', alt: 'タロス派の名家',
+    emblem: { charge: hammer(), marks: flame(30) } },
 
   // ══ V. 宗教・信仰 ════════════════════════════════ 藍
-  { id: 'divines', cat: 5, ja: '帝国教団', en: 'THE CULT OF THE DIVINES', alt: '九大神の教団', provisional: true,
+  { id: 'ninedivines', cat: 5, ja: '九大神聖堂', en: 'THE TEMPLE OF THE NINE DIVINES', alt: '八大神聖堂',
     emblem: { charge: star(9, 42, 17) } },
-  { id: 'talos', cat: 5, ja: 'タロス信仰', en: 'THE WORSHIP OF TALOS', alt: '第九の神', provisional: true,
-    emblem: { charge: blade({ len: 32, guard: 'bar', hilt: 12 }), marks: 'M 38 34 L 42 20 L 50 30 L 60 12 L 70 30 L 78 20 L 82 34 Z' } },
-  { id: 'dibella', cat: 5, ja: 'ディベラ教団', en: 'THE ORDER OF DIBELLA', alt: '', provisional: true,
-    emblem: { charge: rose() } },
-  { id: 'mara', cat: 5, ja: 'マーラ教団', en: 'THE ORDER OF MARA', alt: '', provisional: true,
-    emblem: { charge: knot(3, 22, 6.5) } },
-  { id: 'arkay', cat: 5, ja: 'アーケイ教団', en: 'THE ORDER OF ARKAY', alt: '', provisional: true,
-    emblem: { charge: urn(), marks: arc(45, 2.6, 200, 340) } },
-  { id: 'kynareth', cat: 5, ja: 'キナレス教団', en: 'THE ORDER OF KYNARETH', alt: '', provisional: true,
-    emblem: { charge: spiral(2.2, 36, 6.5) } },
-  { id: 'julianos', cat: 5, ja: 'ジュリアノス教団', en: 'THE ORDER OF JULIANOS', alt: '', provisional: true,
-    emblem: { charge: book(1), marks: star(5, 18, 7, 60, 34) } },
-  { id: 'oldgods', cat: 5, ja: 'ノルドの古き神々', en: 'THE OLD GODS OF THE NORDS', alt: '', provisional: true,
-    emblem: { charge: standingStone(3), marks: dots(0) } },
+  { id: 'auriel', cat: 5, ja: 'アーリエルの聖堂', en: 'THE CHANTRY OF AURI-EL', alt: 'スノーエルフの信仰', extinct: true,
+    emblem: { field: rays(12, 26, 47, 4), charge: sunDisc(18) } },
+  { id: 'moth', cat: 5, ja: 'モスプリースト', en: 'THE ORDER OF THE MOTH', alt: '星霜の書の読み手',
+    emblem: { charge: book(), marks: wing(20, 34) } },
+  { id: 'tribunal', cat: 5, ja: 'トリビュナル寺院', en: 'THE TRIBUNAL TEMPLE', alt: 'モロウウィンドの三神', extinct: true,
+    emblem: { field: ring(40, 2.6), charge: J(star(3, 30, 12), dots(0, 120, 240)) } },
 
   // ══ VI. 秘教・カルト ═════════════════════════════ 紫黒
-  { id: 'dragoncult', cat: 6, ja: '竜教団', en: 'THE DRAGON CULT', alt: '', provisional: true,
-    emblem: { charge: mask({ horns: 1, slits: 2 }) } },
-  { id: 'hermaeus', cat: 6, ja: 'ハルメアス・モラの信徒', en: 'THE SEEKERS OF HERMAEUS MORA', alt: '', provisional: true,
-    emblem: { field: tentacles(7, 14, 42), charge: eye({ r: 9, w: 19, h: 12 }) } },
-  { id: 'namira', cat: 6, ja: 'ナミラの一団', en: 'THE CULT OF NAMIRA', alt: '', provisional: true,
+  { id: 'namira', cat: 6, ja: 'ナミラ信者', en: 'THE CULT OF NAMIRA', alt: '腐肉の宴',
     emblem: { charge: spider() } },
-  { id: 'boethiah', cat: 6, ja: 'ボエシアの信徒', en: 'THE CULT OF BOETHIAH', alt: '', provisional: true,
-    emblem: { field: ring(36, 3.4), charge: blade({ len: 40, guard: 'none', hilt: 14 }) } },
-  { id: 'molagbal', cat: 6, ja: 'モラグ・バルの信徒', en: 'THE CULT OF MOLAG BAL', alt: '', provisional: true,
-    emblem: { field: rays(10, 34, 47, 4), charge: hammer() } },
-  { id: 'hircine', cat: 6, ja: 'ハーシーンの子ら', en: 'THE CHILDREN OF HIRCINE', alt: '', provisional: true,
-    emblem: { field: moon(28, 12, 54), charge: paw() } },
-  { id: 'miraak', cat: 6, ja: 'ミラークの徒', en: 'THE FOLLOWERS OF MIRAAK', alt: '', provisional: true,
+  { id: 'miraak', cat: 6, ja: 'ミラークのカルト', en: 'THE CULT OF MIRAAK', alt: '最初のドヴァキン',
     emblem: { field: tentacles(5, 16, 44), charge: mask({ horns: 0, slits: 1 }) } },
+  { id: 'dragoncult', cat: 6, ja: 'ドラゴン教団', en: 'THE DRAGON CULT', alt: 'ドラゴンプリースト', extinct: true,
+    emblem: { charge: mask({ horns: 1, slits: 2 }) } },
+  { id: 'glenmoril', cat: 6, ja: 'グレンモリルの魔女', en: 'THE GLENMORIL WITCHES', alt: 'ヘイグレイヴン',
+    emblem: { field: moon(26, 17, 44), charge: urn() } },
+  { id: 'mythicdawn', cat: 6, ja: '神話の夜明け残党', en: 'THE REMNANTS OF THE MYTHIC DAWN', alt: 'メエルーンズ・デイゴンの徒',
+    emblem: { field: rays(4, 20, 47, 7, 45), charge: star(4, 34, 9) } },
+  { id: 'peryite', cat: 6, ja: 'ペライトの信者', en: 'THE CULT OF PERYITE', alt: '疫病の守護者',
+    emblem: { charge: spiral(2.2, 36, 6.5) } },
+  { id: 'idealmasters', cat: 6, ja: '理想の支配者', en: 'THE IDEAL MASTERS', alt: 'ソウル・ケルンの主',
+    emblem: { charge: gem(34) } },
+  { id: 'daedriccults', cat: 6, ja: '各デイドラ王の信徒団', en: 'THE CULTS OF THE DAEDRIC PRINCES', alt: '十六の王',
+    emblem: { field: rays(16, 28, 47, 4.2), charge: J(ring(26, 6), circle(60, 60, 11, 1)) } },
 
-  // ══ VII. 部族・辺境 ══════════════════════════════ 土色
-  { id: 'orcstrongholds', cat: 7, ja: 'オーク要塞群', en: 'THE ORC STRONGHOLDS', alt: '', provisional: true,
-    emblem: { charge: J(tusk(1), tusk(-1)), marks: baseBar(22, 94, 4) } },
-  { id: 'skaal', cat: 7, ja: 'スカール', en: 'THE SKAAL', alt: '全ての創造主に仕える民', provisional: true,
+  // ══ VII. 部族・辺境・その他 ═══════════════════════ 土色
+  { id: 'skaal', cat: 7, ja: 'スカール族', en: 'THE SKAAL', alt: '全ての創造主に仕える民',
     emblem: { field: ring(40, 2.6), charge: antlers(2) } },
-  { id: 'falmer', cat: 7, ja: 'ファルメル', en: 'THE FALMER', alt: '雪の民の成れの果て', provisional: true,
+  { id: 'redoran', cat: 7, ja: 'ハウス・レドラン', en: 'HOUSE REDORAN', alt: '名誉の家',
     emblem: { charge: chitin() } },
-  { id: 'dwemer', cat: 7, ja: 'ドウェマー', en: 'THE DWEMER', alt: '深き者・滅亡', provisional: true,
-    emblem: { charge: gear(12, 36, 27, 11) } },
-  { id: 'reachmen', cat: 7, ja: 'リーチメン', en: 'THE REACHMEN', alt: '', provisional: true,
-    emblem: { field: rays(16, 38, 47, 3), charge: standingStone(1) } },
+  { id: 'telvanni', cat: 7, ja: 'ハウス・テルヴァンニ', en: 'HOUSE TELVANNI', alt: '魔術師の家',
+    emblem: { charge: mushroom() } },
+  { id: 'orcstrongholds', cat: 7, ja: 'オークの砦', en: 'THE ORC STRONGHOLDS', alt: 'マラキャスの民',
+    emblem: { charge: J(tusk(1), tusk(-1)), marks: baseBar(22, 94, 4) } },
+  { id: 'khajiitcaravans', cat: 7, ja: 'キャジートのキャラバン', en: 'THE KHAJIIT CARAVANS', alt: '月に生まれる民',
+    emblem: { charge: twinMoons() } },
+  { id: 'riekling', cat: 7, ja: 'リークリング族', en: 'THE RIEKLINGS', alt: '氷の小人',
+    emblem: { charge: J(rotate(22, bar(60, 98, 60, 24, 9, 0)), rotate(-22, bar(60, 98, 60, 24, 9, 0))),
+      marks: J(rotate(22, poly([[60, 14], [69, 34], [51, 34]])), rotate(-22, poly([[60, 14], [69, 34], [51, 34]]))) } },
+  { id: 'bandits', cat: 7, ja: '山賊諸派', en: 'THE BANDIT CLANS', alt: '街道の徒',
+    emblem: { charge: J(rotate(28, axe()), rotate(-28, axe())) } },
+  { id: 'alduin', cat: 7, ja: 'アルドゥインの竜群', en: 'THE DRAGONS OF ALDUIN', alt: '世界を喰らう者の眷属',
+    emblem: { charge: serpent() } },
 ];
 
 export const catOf = (f) => categories.find((c) => c.id === f.cat);
 export const byCat = (id) => factions.filter((f) => f.cat === id);
+
+// ── 台割（仕様書 7） ──────────────────────────────
+export const plan = [
+  { n: 1,  ja: '表紙・扉',            pages: 2 },
+  { n: 2,  ja: '序（編集者の言葉）',   pages: 1 },
+  { n: 3,  ja: '読み方・凡例',         pages: 2, note: '仕様書 8 の追加提案を採用。記号体系の凡例を巻頭に置く。' },
+  { n: 4,  ja: '全体相関図',           pages: 2, note: '【最重要】全 49 組織を一望する関係図。' },
+  { n: 5,  ja: '勢力分布図',           pages: 2 },
+  { n: 6,  ja: '年表',                pages: 2, note: '白金協定・マルカルス事件・大戦・竜の帰還。' },
+  { n: 7,  ja: '本編（分類 I〜VII）',   pages: 80 },
+  { n: 8,  ja: '門戸・排他関係一覧表',  pages: 2, note: '原仕様「加入可否」を改称。' },
+  { n: 9,  ja: '人物索引',             pages: 2 },
+  { n: 10, ja: '総索引',              pages: 2 },
+  { n: 11, ja: '追記欄',              pages: 4, note: '仕様書 8 の追加提案を採用。読者が書き込む白紙。' },
+  { n: 12, ja: '奥付',                pages: 1 },
+];

@@ -128,13 +128,13 @@ export const hand = ({ spread = 1, wrist = 1 } = {}) => {
 // 見る組織で共有する。瞼・虹彩・瞳を三つの片で持つ。
 // 単色の塗りだけで眼を成立させるには、瞼を輪郭にするしかない。
 // 瞼を面で描くと、虹彩も瞳も同じ黒に溶けて、ただの杏になる。
-export const eye = ({ w = 30, h = 17, r = 11, t = 4.6 } = {}) => {
+export const eye = ({ w = 30, h = 17, r = 11, t = 6.4 } = {}) => {
   const lens = (ww, hh) => `M ${60 - ww} 60 Q 60 ${60 - hh} ${60 + ww} 60 Q 60 ${60 + hh} ${60 - ww} 60 Z`;
   const rim = lens(w, h) + ' ' + lens(w - t * 1.8, h - t).replace(/M/, 'M').split('').reverse().join('')
     .replace(/Z/, '') ;
   return J(
-    lens(w, h) + ' ' + lens(Math.max(w - t * 1.9, 4), Math.max(h - t, 2)),   // 瞼の輪郭
-    circle(60, 60, r * 0.62, 1),                                             // 瞳
+    lens(w, h) + ' ' + lens(Math.max(w - t * 1.7, 4), Math.max(h - t, 2)),   // 瞼の輪郭
+    circle(60, 60, r * 0.74, 1),                                             // 瞳
   );
 };
 
@@ -357,6 +357,39 @@ export const scales = () => J(
   bar(24, 40, 96, 40, 5, 0),
   'M 14 44 L 44 44 L 36 64 L 22 64 Z', 'M 76 44 L 106 44 L 98 64 L 84 64 Z');
 
+
+// ── 追加の語彙（V・VI・VII 用） ─────────────────────
+// 既存の語彙で足りない図象だけを足す。足すたびに設計思想が薄まるので、
+// 一つ足すごとに「既存の組み合わせで代替できないか」を先に確かめている。
+
+// 日輪。アーリエルの聖堂。光条は既存の rays を使い、中心に盤を置く。
+export const sunDisc = (r = 20) => circle(60, 60, r, 1);
+
+// 茸楼。ハウス・テルヴァンニ。塔の語彙の変種として持つ。
+export const mushroom = () => J(
+  'M 22 52 C 24 32, 40 20, 60 20 C 80 20, 96 32, 98 52 C 84 46, 70 44, 60 44 C 50 44, 36 46, 22 52 Z',
+  'M 52 44 C 50 62, 48 78, 44 96 L 76 96 C 72 78, 70 62, 68 44 Z');
+
+// 宝珠。理想の支配者。稜を持つ結晶。
+export const gem = (r = 34) => J(
+  poly([P(0, r), P(52, r * 0.62), P(128, r * 0.72), P(180, r * 0.92), P(232, r * 0.72), P(308, r * 0.62)]),
+  circle(60, 60, r * 0.3, 1));
+
+// 斧。山賊諸派。刃と柄。
+export const axe = () => J(
+  bar(60, 26, 60, 96, 7.4, 0),
+  'M 62 30 C 78 32, 90 44, 90 58 C 90 66, 84 72, 76 70 L 62 66 Z');
+
+// 蛇竜。アルドゥインの竜群。環を成す胴と、それを噛む頭。
+// 世界を一周して自らに戻る形。竜の帰還を、輪として置いた。
+export const serpent = () => J(
+  arc(34, 8.5, 40, 320),
+  poly([P(28, 44), P(6, 30), P(352, 44), P(2, 30), P(14, 38)]),
+  'M 60 20 L 76 12 L 74 26 Z');
+
+// 双月。キャジートのキャラバン。二つの月が同時に出る夜に生まれる民。
+export const twinMoons = () => J(moon(24, 15, 46), moon(15, 10, 82));
+
 // ── 外郭。全 49 点で不変。 ────────────────────────
 const FRAME = ring(56, 2.6) + SEP + ring(50.5, 1.1);
 
@@ -374,10 +407,25 @@ const render = (src, color) => src.split(SEP).filter((s) => s.trim()).map((d) =>
   return `<path fill="${color}" fill-rule="evenodd" d="${d}"/>`;
 }).join('');
 
-export function emblem(recipe, { color = '#1b1b1a' } = {}) {
+// 滅亡した組織の打ち消し。外郭を貫いて図象の上に乗せる。
+// 図象そのものは削らない。滅んだのは組織であって、徽章の意匠ではない。
+// 地色で一度太く抜いてから細い線を引くので、下の図象と溶けない。
+const STRIKE = 'M 10 78 L 110 42 L 110 53 L 10 89 Z';
+
+// scale は較正係数。図象の面積率を機械的に揃えるために使う。
+// 手で「もう少し小さく」と調整すると、49 点ぶんの判断がばらつく。
+// 測って、目標との比から一意に決める。
+export function emblem(recipe, { color = '#1b1b1a', extinct = false, paper = '#eceae4', scale = 1 } = {}) {
   const body = [recipe.field, recipe.charge, recipe.marks].filter(Boolean).join(SEP);
+  const mark = extinct
+    ? `<path fill="${paper}" d="M 8 74.6 L 112 37.2 L 112 57.6 L 8 95 Z"/>`
+      + `<path fill="${color}" d="${STRIKE}"/>`
+    : '';
+  const g = scale === 1 ? render(body, color)
+    : `<g transform="translate(60,60) scale(${scale.toFixed(4)}) translate(-60,-60)">${render(body, color)}</g>`;
   return `<svg class="emb" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">`
-    + render(FRAME, color) + render(body, color) + `</svg>`;
+    + render(FRAME, color) + g + mark + `</svg>`;
 }
 
 export { P, poly, bar, circle, mirrored, rotate, J, FRAME };
+export const strike = () => 'M 14 76 L 106 44 L 106 54 L 14 86 Z';

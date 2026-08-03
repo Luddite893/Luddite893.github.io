@@ -10,20 +10,23 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { emblem } from './heraldry.mjs';
 import { factions, categories, byCat } from './factions.mjs';
+import cal from './calibration.json' with { type: 'json' };
+
+const S = (f) => ({ extinct: f.extinct, scale: cal[f.id] ?? 1 });
 
 const sheet = categories.map((c) => {
   const items = byCat(c.id).map((f) => `
     <figure class="cell" data-id="${f.id}">
-      <div class="big">${emblem(f.emblem)}</div>
+      <div class="big">${emblem(f.emblem, S(f))}</div>
       <div class="row">
-        <span class="mid">${emblem(f.emblem)}</span>
-        <span class="min">${emblem(f.emblem)}</span>
-        <span class="tint" style="--c:${c.color}">${emblem(f.emblem, { color: c.color })}</span>
+        <span class="mid">${emblem(f.emblem, S(f))}</span>
+        <span class="min">${emblem(f.emblem, S(f))}</span>
+        <span class="tint">${emblem(f.emblem, { ...S(f), color: c.color })}</span>
       </div>
       <figcaption>
-        <b>${f.ja}${f.provisional ? '<i class="pv">仮</i>' : ''}</b>
+        <b>${f.ja}${f.extinct ? '<i class="pv">滅</i>' : ''}</b>
         <span class="en">${f.en}</span>
-        <span class="area" data-area="${f.id}">—</span>
+        <span class="area" data-area="${f.id}"${f.extinct ? ' data-extinct="1"' : ''}>—</span>
       </figcaption>
     </figure>`).join('');
   return `<section class="cat">
@@ -67,6 +70,7 @@ const html = `<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <p class="lead">
 上段 38mm＝設計寸法。下段は左から 12mm（本文中の実寸）、8mm（柱・小口に入る最小寸法）、
 そして分類色を乗せたもの。％は図象の面積率で、18〜34% を外れたものは赤で示す。
+「滅」は滅亡した組織で、紋章に統一した打ち消しの線が入る。
 外れた点は、並べたときに必ず一点だけ浮く。<br>
 外形・二重罫・図象領域の半径は全 49 点で同一。図象はすべて塗りのみで構成し、線を使っていない。
 </p>
@@ -95,7 +99,8 @@ ${sheet}
     const pct = (ink / total) * 100;
     const el = cell.querySelector('.area');
     el.textContent = pct.toFixed(1) + '%';
-    if (pct < 18 || pct > 34) el.classList.add('bad');
+    // 滅亡組織は打ち消しの線のぶん面積が増える。判定からは外す。
+    if (!el.dataset.extinct && (pct < 18 || pct > 34)) el.classList.add('bad');
     el.dataset.pct = pct.toFixed(1);
   }
   document.body.dataset.measured = '1';
