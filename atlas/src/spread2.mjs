@@ -21,6 +21,10 @@ import { edgesOf, KINDS } from './relations.mjs';
 import { figure } from './figures.mjs';
 import { miniMap } from './map.mjs';
 import { figurePage, runningHead, edgeTab } from './spread.mjs';
+import { index as artIndex, artImg, SIZE, dpiOf, artworkCss } from './artwork.mjs';
+import { emblem } from './heraldry.mjs';
+import { cut } from './scene.mjs';
+import cal from './calibration.json' with { type: 'json' };
 import { factions } from './factions.mjs';
 
 const catOf = (f) => categories.find((c) => c.id === f.cat);
@@ -35,6 +39,41 @@ const page = (side, f, c, folio, body) => `<section class="sheet ${side}">
     </div>
   </div>
 </section>`;
+
+// ── 一頁目　図版面 ────────────────────────────────
+// 支給図版があればそれを置き、無ければ従来の描画に落とす。
+// 一点ずつ差し替えられるので、四十九点が揃うのを待たずに進行できる。
+function figurePage2(f, c, folio, spec) {
+  const ix = artIndex();
+  const a = ix.主図版[f.id];
+  if (!a) return figurePage(f, c, folio, spec);       // 未入稿。従来の描画のまま
+  const S = SIZE.主図版;
+  const dpi = a.px ? Math.round(dpiOf(a.px.w, S.w)) : 0;
+  const cuts = (spec.cuts ?? []).slice(0, 3);
+  return `<section class="sheet verso">
+  <div class="trim">
+    ${edgeTab(c, false)}
+    <div class="frame">
+      ${runningHead(f, c, false, folio)}
+      <div class="g plate-head">
+        <div class="c4 plate-label">
+          <span class="pl-num" style="--c:${c.color}">${spec.num}</span>
+          <span class="pl-en">${f.en}</span>
+        </div>
+        <div class="c2 plate-emblem" style="--c:${c.color}">${
+          emblem(f.emblem, { scale: cal[f.id] ?? 1, extinct: f.extinct, color: c.color })}</div>
+      </div>
+      ${artImg(a.path, { w: S.w, h: S.h, color: c.color, alt: f.ja })}
+      <div class="plate-cap">${spec.caption}</div>
+      <div class="g plate-cuts">
+        ${cuts.map((k, i) => `<div class="c2 cutcell">${cut(k, { seed: f.id + i })}
+          <span class="cut-cap">${(spec.cutCaps ?? [])[i] ?? ''}</span></div>`).join('')}
+      </div>
+      <div class="art-stamp">入稿図版　${a.file}　${a.px ? a.px.w + '×' + a.px.h + 'px' : '寸法不明'}　${dpi}dpi</div>
+    </div>
+  </div>
+</section>`;
+}
 
 // ── 二頁目　名称と概要 ────────────────────────────
 function pageB(f, c, folio) {
@@ -71,11 +110,15 @@ function pageB(f, c, folio) {
 
     <div class="rec-people2">
       <div class="sec-h">主要人物</div>
-      <div class="people-row2">${r2.people.map((p, i) => `
-        <figure class="pf2">
-          <div class="pb2">${figure({ ...p, id: f.id + 'q' + i })}</div>
+      <div class="people-row2">${r2.people.map((p, i) => {
+        const sup = (artIndex().人物図版[f.id] ?? [])[i];
+        const body = sup
+          ? artImg(sup.path, { w: 34, h: 51, alt: p.ja })
+          : `<div class="pb2">${figure({ ...p, id: f.id + 'q' + i })}</div>`;
+        return `<figure class="pf2">${body}
           <figcaption><b>${p.ja}</b><span>${p.note}</span></figcaption>
-        </figure>`).join('')}</div>
+        </figure>`;
+      }).join('')}</div>
       ${r2.peopleNote ? `<p class="ppl-note">${r2.peopleNote}</p>` : ''}
     </div>`);
 }
@@ -128,7 +171,7 @@ function pageD(f, c, folio) {
 export function spread2(f, spec, folio) {
   const c = catOf(f);
   return [
-    figurePage(f, c, folio, spec),
+    figurePage2(f, c, folio, spec),
     pageB(f, c, folio + 1),
     pageC(f, c, folio + 2),
     pageD(f, c, folio + 3),
@@ -136,7 +179,13 @@ export function spread2(f, spec, folio) {
 }
 
 // ── 第二版で足した体裁 ───────────────────────────
-export const spread2Css = () => `
+export const spread2Css = () => artworkCss() + `
+/* 入稿の控え。校正刷りにだけ出す。納品版では消す。 */
+.art-stamp { position:absolute; bottom:-11mm; left:0; font-size:2.2mm; letter-spacing:.1em;
+             color:#a8a49a; }
+.art { margin-bottom:0; }
+.pf2 .art { width:34mm; height:51mm; }
+
 /* 節見出し。初版の .lbl と同じ位置に立つが、格を一段上げる。 */
 .sec-h { font-size:2.8mm; letter-spacing:.2em; color:var(--ink-weak); margin-bottom:1.6mm;
          border-bottom:.2mm solid var(--rule); padding-bottom:1mm; }

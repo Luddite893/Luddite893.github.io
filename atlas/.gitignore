@@ -8,3 +8,6 @@ out/sample-raw.pdf
 out/sample.html
 out/sample-plate.html
 out/proof-plate.html
+out/artwork-print/
+out/artwork-screen/
+out/artwork-build.json
