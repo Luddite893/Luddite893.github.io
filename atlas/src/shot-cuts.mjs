@@ -1,0 +1,10 @@
+import { chromium } from 'playwright-core';
+import { fileURLToPath } from 'node:url';
+const out = fileURLToPath(new URL('../out/', import.meta.url));
+const b = await chromium.launch({ executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const p = await b.newPage({ viewport:{width:1240,height:900}, deviceScaleFactor:2 });
+await p.goto('file://' + out + 'proof-cuts.html', { waitUntil:'networkidle' });
+await p.evaluate(()=>document.fonts.ready); await p.waitForTimeout(400);
+await p.locator('.g').first().screenshot({ path: out + 'shot-cuts.png' });
+await p.locator('.g').last().screenshot({ path: out + 'shot-structures.png' });
+await b.close(); console.log('→ shot-cuts.png / shot-structures.png');

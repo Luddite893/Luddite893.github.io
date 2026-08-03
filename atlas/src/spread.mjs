@@ -22,15 +22,23 @@ import { bust } from './busts.mjs';
 import { scene, cut } from './scene.mjs';
 import { miniMap } from './map.mjs';
 import cal from './calibration.json' with { type: 'json' };
+import fit from './relfit.json' with { type: 'json' };
 
 const catOf = (f) => categories.find((c) => c.id === f.cat);
 
 // 関係欄の丈は関係の数で決める。二件の組織に六件ぶんの箱を与えると、
 // 空白が「何かが抜けている」という誤った合図になる。
-const relHeight = (id) => {
+const relBase = (id) => {
   const n = edgesOf(id).length;
   return n <= 2 ? 30 : n <= 4 ? 38 : n <= 8 ? 46 : 54;
 };
+
+// 版面の余りは組織ごとに違う。概要の長さ・人物の数・目的の数で変わるからだ。
+// 余った分をそのまま下に空けると、頁の三割が白くなる項が出る。
+// そこで一度組んで実測し、余白を関係図の丈に足し戻す。
+// 節点が増えるのではなく、節点が大きくなるだけなので、
+// 「空欄が何かの欠落を示す」という誤読は生じない。
+const relHeight = (id) => Math.min(relBase(id) + (fit[id] ?? 0), 86);
 
 // 小口の帯。分類ごとに天地の位置を変える。
 export function edgeTab(cat, isRecto) {
@@ -53,7 +61,7 @@ const runningHead = (f, c, isRecto, folio) => `
 function figurePage(f, c, folio, spec) {
   const S = { scale: cal[f.id] ?? 1, extinct: f.extinct };
   const cuts = (spec.cuts ?? ['sword', 'shield', 'banner']).slice(0, 3);
-  return `<section class="sheet verso">
+  return `<section class="sheet verso" data-id="${f.id}">
   <div class="trim">
     ${edgeTab(c, false)}
     <div class="frame">
@@ -81,7 +89,7 @@ function infoPage(f, c, folio) {
   const r = recordOf(f);
   const tag = (k) => TAGS[k].values[r[k]] ?? '—';
   const people = (r.people ?? []).slice(0, 5);
-  return `<section class="sheet recto">
+  return `<section class="sheet recto" data-id="${f.id}">
   <div class="trim">
     ${edgeTab(c, true)}
     <div class="frame">
