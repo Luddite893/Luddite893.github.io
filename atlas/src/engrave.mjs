@@ -56,11 +56,19 @@ function rng(seed) {
 
 // ── 調子の規約 ─────────────────────────────────
 // 全図版がこの一つの表に従う。ここを触ると 360 点すべての濃さが同時に動く。
+// 値の単位は **刷り上がりのミリ**。図版の座標系ではない。
+//
+// これを座標系で定義すると、大きい図版ほど線が粗くなる。
+// 紋章は 22mm、胸像は 18mm、小カットは 25mm、主図版は 174mm——
+// すべて viewBox は 100 前後なので、同じ「線間 4 単位」が
+// 刷り上がりでは 0.9mm と 7mm になってしまう。
+// 同じ本の中で、頁をめくるたびに彫りの目が変わることになる。
+// 銅版画の目は、版の大小にかかわらず一定である。彫師の手が一定だからだ。
 export const TONE = {
-  gapFar: 4.2,      // 最も薄いときの線間
-  gapNear: 1.15,    // 最も濃いときの線間
-  wThin: 0.085,     // 最も細いときの半幅
-  wFat: 0.34,       // 最も太いときの半幅
+  gapFar: 0.62,     // 最も薄いときの線間（mm）
+  gapNear: 0.17,    // 最も濃いときの線間（mm）
+  wThin: 0.013,     // 最も細いときの半幅（mm）
+  wFat: 0.052,      // 最も太いときの半幅（mm）
   cross2: 0.42,     // 二番手（斜交）を入れ始める濃さ
   cross3: 0.70,     // 三番手を入れ始める濃さ
   flood: 0.93,      // 地を敷き始める濃さ
@@ -74,8 +82,12 @@ const lerp = (a, b, t) => a + (b - a) * t;
 //   t      濃さ 0〜1
 //   angle  一番手の角度（度）。形の面の向きに合わせる。
 //   box    [x0,y0,x1,y1] 走査範囲
-export function engrave(d, { t = 0.5, angle = 38, box, seed = '', ink = '#1b1b1a' } = {}) {
+// mmPerUnit：この図版の座標 1 単位が刷り上がり何ミリになるか。
+//   紋章 22mm/120 単位 = 0.183 ／ 胸像 18mm/100 = 0.18
+//   小カット 25mm/100 = 0.25 ／ 主図版 174mm/100 = 1.74
+export function engrave(d, { t = 0.5, angle = 38, box, seed = '', ink = '#1b1b1a', mmPerUnit = 0.2 } = {}) {
   if (t <= 0.02) return '';
+  const U = 1 / mmPerUnit;                       // mm → 座標単位
   const id = `e${++uid}`;
   const R = rng(id + seed + angle);
   const [x0, y0, x1, y1] = box;
@@ -83,8 +95,11 @@ export function engrave(d, { t = 0.5, angle = 38, box, seed = '', ink = '#1b1b1a
   const span = Math.hypot(x1 - x0, y1 - y0) * 0.62;
 
   const pass = (a, strength) => {
-    const gap = lerp(TONE.gapFar, TONE.gapNear, strength);
-    const w = lerp(TONE.wThin, TONE.wFat, strength);
+    let gap = lerp(TONE.gapFar, TONE.gapNear, strength) * U;
+    const w = lerp(TONE.wThin, TONE.wFat, strength) * U;
+    // 走査本数の上限。大きな面を最濃で彫ると、線が万を超えて版が重くなる。
+    const maxLines = 460;
+    if ((span * 2) / gap > maxLines) gap = (span * 2) / maxLines;
     const rad = (a * Math.PI) / 180;
     const ux = Math.cos(rad), uy = Math.sin(rad);
     let out = '';
@@ -117,17 +132,20 @@ export function engrave(d, { t = 0.5, angle = 38, box, seed = '', ink = '#1b1b1a
 // ── 点刻（スティップル） ────────────────────────────
 // 線が向かない場所——空、霞、皮膚のごく淡い調子——に使う。
 // 銅版画では roulette や点刻器で打つ。線と混ぜても画風は破れない。
-export function stipple(d, { t = 0.3, box, seed = '', ink = '#1b1b1a' } = {}) {
+export function stipple(d, { t = 0.3, box, seed = '', ink = '#1b1b1a', mmPerUnit = 0.2 } = {}) {
   if (t <= 0.02) return '';
+  const U = 1 / mmPerUnit;
   const id = `s${++uid}`;
   const R = rng(id + seed);
   const [x0, y0, x1, y1] = box;
   const area = (x1 - x0) * (y1 - y0);
-  const n = Math.round(area * t * 0.09);
+  // 粒の数は刷り上がりの面積で決める。t=0.3 でおよそ 2.4 点／mm²。
+  const areaMM = area * mmPerUnit * mmPerUnit;
+  const n = Math.min(Math.round(areaMM * t * 8), 4000);
   let out = '';
   for (let i = 0; i < n; i++) {
     const x = x0 + R() * (x1 - x0), y = y0 + R() * (y1 - y0);
-    const r = (0.16 + R() * 0.26) * (0.6 + t);
+    const r = (0.026 + R() * 0.040) * (0.6 + t) * U;
     out += `M ${x.toFixed(2)} ${y.toFixed(2)} m -${r.toFixed(2)} 0 `
          + `a ${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(r * 2).toFixed(2)} 0 `
          + `a ${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(-r * 2).toFixed(2)} 0 Z`;
@@ -138,8 +156,10 @@ export function stipple(d, { t = 0.3, box, seed = '', ink = '#1b1b1a' } = {}) {
 
 // ── 輪郭線 ─────────────────────────────────────
 // 銅版画の輪郭も等幅ではない。下側と奥側が太る。
-export function contour(d, { w = 0.5, ink = '#1b1b1a' } = {}) {
-  return `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${w}" `
+export function contour(d, { w = 0.5, ink = '#1b1b1a', mmPerUnit = null } = {}) {
+  // mmPerUnit を渡せば、線幅も刷り上がりのミリで指定できる。
+  const sw = mmPerUnit ? (w / mmPerUnit).toFixed(3) : w;
+  return `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${sw}" `
        + `stroke-linejoin="round" stroke-linecap="round"/>`;
 }
 

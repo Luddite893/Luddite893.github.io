@@ -132,6 +132,8 @@ const neck = () => 'M 41 58 L 59 58 L 59 74 C 55 78, 45 78, 41 74 Z';
 // ── 一点を組む ──────────────────────────────────
 // 光源は左上に固定。全 150 点で動かさない。
 export function bust(spec) {
+  // 刷り上がり 18mm ／ 座標系 100 単位。彫りの目は実寸で決まる。
+  const MPU = (spec.mm ?? 18) / 100;
   const s = { ...SKULLS[spec.race ?? 'human'] };
   const g = GARMENTS[spec.garment ?? 'robe'];
   const seed = spec.id ?? 'b';
@@ -152,40 +154,40 @@ export function bust(spec) {
 
   const P = [];
   // 衣
-  P.push(engrave(S, { t: g.t, angle: g.angle, box: [6, 64, 94, 120], seed: seed + 'g' }));
-  if (g.stip) P.push(stipple(S, { t: g.stip, box: [6, 64, 94, 120], seed: seed + 'gs' }));
-  P.push(contour(S, { w: 0.62 }));
+  P.push(engrave(S, { t: g.t, angle: g.angle, box: [6, 64, 94, 120], seed: seed + 'g', mmPerUnit: MPU }));
+  if (g.stip) P.push(stipple(S, { t: g.stip, box: [6, 64, 94, 120], seed: seed + 'gs', mmPerUnit: MPU }));
+  P.push(contour(S, { w: 0.068, mmPerUnit: MPU }));
   // 首
-  P.push(engrave(N, { t: 0.30, angle: 72, box: [40, 56, 60, 78], seed: seed + 'n' }));
-  P.push(engrave(neckShade, { t: 0.56, angle: 72, box: [40, 58, 60, 78], seed: seed + 'ns' }));
-  P.push(contour(N, { w: 0.5 }));
+  P.push(engrave(N, { t: 0.30, angle: 72, box: [40, 56, 60, 78], seed: seed + 'n', mmPerUnit: MPU }));
+  P.push(engrave(neckShade, { t: 0.56, angle: 72, box: [40, 58, 60, 78], seed: seed + 'ns', mmPerUnit: MPU }));
+  P.push(contour(N, { w: 0.055, mmPerUnit: MPU }));
   // 耳
-  if (E) { P.push(engrave(E, { t: 0.34, angle: 50, box: [10, 2, 90, 50], seed: seed + 'e' })); P.push(contour(E, { w: 0.5 })); }
+  if (E) { P.push(engrave(E, { t: 0.34, angle: 50, box: [10, 2, 90, 50], seed: seed + 'e', mmPerUnit: MPU })); P.push(contour(E, { w: 0.055, mmPerUnit: MPU })); }
   // 顔
-  P.push(engrave(H, { t: 0.13, angle: 74, box: [20, 14, 80, 72], seed: seed + 'f' }));
+  P.push(engrave(H, { t: 0.13, angle: 74, box: [20, 14, 80, 72], seed: seed + 'f', mmPerUnit: MPU }));
   P.push(`<g clip-path="url(#hc${seed})">`
-    + engrave(shadeSide, { t: 0.40, angle: 74, box: [48, 14, 82, 72], seed: seed + 'fs' })
-    + engrave(browShade, { t: 0.44, angle: 16, box: [24, 31, 76, 44], seed: seed + 'fb' })
-    + engrave(noseShade, { t: 0.44, angle: 84, box: [46, 36, 58, 58], seed: seed + 'fn' })
+    + engrave(shadeSide, { t: 0.40, angle: 74, box: [48, 14, 82, 72], seed: seed + 'fs', mmPerUnit: MPU })
+    + engrave(browShade, { t: 0.44, angle: 16, box: [24, 31, 76, 44], seed: seed + 'fb', mmPerUnit: MPU })
+    + engrave(noseShade, { t: 0.44, angle: 84, box: [46, 36, 58, 58], seed: seed + 'fn', mmPerUnit: MPU })
     + `</g>`);
-  P.push(contour(H, { w: 0.62 }));
+  P.push(contour(H, { w: 0.068, mmPerUnit: MPU }));
   if (s.crest) {
     const cr = `M 50 ${17} C ${50 + 3} 12, ${50 + 4} 6, ${50 + 2} 2 `
       + `C ${50 + 9} 6, ${50 + 12} 16, ${50 + 8} 26 `
       + `C ${50 + 6} 22, ${50 + 3} 19, 50 17 Z`
       + ` M 50 22 C ${50 + 4} 20, ${50 + 8} 22, ${50 + 11} 30 `
       + `C ${50 + 6} 29, ${50 + 3} 28, 50 28 Z`;
-    P.push(engrave(cr, { t: 0.5, angle: 60, box: [46, 0, 64, 32], seed: seed + 'c' }));
-    P.push(contour(cr, { w: 0.5 }));
+    P.push(engrave(cr, { t: 0.5, angle: 60, box: [46, 0, 64, 32], seed: seed + 'c', mmPerUnit: MPU }));
+    P.push(contour(cr, { w: 0.055, mmPerUnit: MPU }));
   }
-  if (s.tusk) P.push(`<path fill="#fff" stroke="${INK}" stroke-width="0.7" `
+  if (s.tusk) P.push(`<path fill="#fff" stroke="${INK}" stroke-width="${(0.075 / MPU).toFixed(3)}" `
     + `d="M ${50 - w * 0.5} ${40 + 23 * s.jaw} l 3.4 -9.5 l 3.2 9.5 Z `
     + `M ${50 + w * 0.5} ${40 + 23 * s.jaw} l -3.4 -9.5 l -3.2 9.5 Z"/>`);
   // 髪・被り物は顔の上
-  if (hair) { P.push(engrave(hair, { t: 0.62, angle: 84, box: [10, 4, 90, 80], seed: seed + 'h' })); P.push(contour(hair, { w: 0.55 })); }
+  if (hair) { P.push(engrave(hair, { t: 0.62, angle: 84, box: [10, 4, 90, 80], seed: seed + 'h', mmPerUnit: MPU })); P.push(contour(hair, { w: 0.061, mmPerUnit: MPU })); }
   if (gear) {
-    P.push(engrave(gear, { t: spec.headgear === 'plate' ? 0.3 : 0.48, angle: 28, box: [4, 0, 96, 70], seed: seed + 'k' }));
-    P.push(contour(gear, { w: 0.62 }));
+    P.push(engrave(gear, { t: spec.headgear === 'plate' ? 0.3 : 0.48, angle: 28, box: [4, 0, 96, 70], seed: seed + 'k', mmPerUnit: MPU }));
+    P.push(contour(gear, { w: 0.068, mmPerUnit: MPU }));
   }
 
   return `<svg class="bust" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">`
