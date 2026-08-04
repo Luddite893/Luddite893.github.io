@@ -39,6 +39,7 @@ import { cat3 } from './records2/cat3.mjs';
 import { cat4 } from './records2/cat4.mjs';
 import { cat5 } from './records2/cat5.mjs';
 import { cat6 } from './records2/cat6.mjs';
+import { cat7 } from './records2/cat7.mjs';
 
 export const records2 = {
   ...cat1,
@@ -47,6 +48,7 @@ export const records2 = {
   ...cat4,
   ...cat5,
   ...cat6,
+  ...cat7,
 };
 
 // 文字数の検査。仕様の枠に収まっているかを機械で見る。
