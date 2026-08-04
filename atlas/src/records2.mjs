@@ -34,9 +34,11 @@
 // ここは束ねるだけの層で、外から見た形（records2 / lengths / SPEC）は変えない。
 
 import { cat1 } from './records2/cat1.mjs';
+import { cat2 } from './records2/cat2.mjs';
 
 export const records2 = {
   ...cat1,
+  ...cat2,
 };
 
 // 文字数の検査。仕様の枠に収まっているかを機械で見る。

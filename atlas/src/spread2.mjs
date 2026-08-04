@@ -144,6 +144,9 @@ function pageC(f, c, folio) {
 function pageD(f, c, folio) {
   const r = recordOf(f), r2 = records2[f.id];
   const rels = edgesOf(f.id);
+  // 辺の多い項では、図式を低くし、註の行を詰める。
+  // 二段組にはしない。名の欄が固定幅なので、段を割ると註のほうが潰れる。
+  const dense = rels.length > 8;
   return page('recto', f, c, folio, `
     <div class="sec-h big">評判</div>
     <p class="rep-lead">記録どうしが食い違う箇所は、食い違ったまま並べる。
@@ -156,8 +159,8 @@ function pageD(f, c, folio) {
 
     <div class="rec-rel2">
       <div class="sec-h">関係</div>
-      <div class="relbox">${egoDiagram(f.id, { w: 174, h: 44 })}</div>
-      <ul class="rel-notes">${rels.map((e) => {
+      <div class="relbox">${egoDiagram(f.id, { w: 174, h: dense ? 32 : 44 })}</div>
+      <ul class="rel-notes${dense ? ' dense' : ''}">${rels.map((e) => {
         const o = byId[e.other], k = KINDS[e.kind];
         return `<li><span class="rn-k" style="--c:${catOf(o).color}">${k.ja}</span>
           <a class="xl rn-n" data-to="${o.id}">${o.ja}</a>
@@ -237,4 +240,8 @@ export const spread2Css = () => artworkCss() + `
 .rn-k { width:8mm; flex:none; color:var(--c); font-size:2.4mm; letter-spacing:.1em; }
 .rn-n { width:34mm; flex:none; font-weight:500; }
 .rn-t { color:var(--ink-mid); }
+/* 辺が九本を超える項（帝国軍・サルモール）。行を詰めて版面に収める。 */
+.rel-notes.dense li { font-size:2.5mm; line-height:calc(var(--lead)*0.72); padding:.5mm 0; }
+.rel-notes.dense .rn-k { font-size:2.2mm; }
+.rel-notes.dense .rn-n { width:31mm; }
 `;
