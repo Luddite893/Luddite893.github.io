@@ -16,7 +16,8 @@ import { G } from './grid.mjs';
 import { categories } from './factions.mjs';
 import { recordOf, TAGS } from './records.mjs';
 import { records2 } from './records2.mjs';
-import { egoDiagram } from './diagram.mjs';
+import { THEMES } from './relmap-data.mjs';
+
 import { edgesOf, KINDS } from './relations.mjs';
 import { figure } from './figures.mjs';
 import { miniMap } from './map.mjs';
@@ -140,6 +141,14 @@ function pageC(f, c, folio) {
       <div class="c3 in-cell"><div class="in-h">${x.h}</div><p>${x.text}</p></div>`).join('')}</div>`);
 }
 
+// その項が出てくる相関図を示す。図は巻末に集めてあるので、案内が要る。
+const sheetsOf = (id) => {
+  const t = THEMES.filter((x) => x.nodes.some((n) => n.id === id))
+    .map((x) => `主題${x.n}「${x.ja}」`);
+  const c = categories.find((x) => x.id === byId[id].cat);
+  return `この関係は、${[`分類${c.n}の図`, ...t].slice(0, 3).join('・')}に出る`;
+};
+
 // ── 四頁目　評判・記録の欠落・関係 ──────────────────
 function pageD(f, c, folio) {
   const r = recordOf(f), r2 = records2[f.id];
@@ -158,13 +167,16 @@ function pageD(f, c, folio) {
     <p class="gaps">${r2.gaps}</p>
 
     <div class="rec-rel2">
-      <div class="sec-h">関係</div>
-      <div class="relbox">${egoDiagram(f.id, { w: 174, h: dense ? 32 : 44 })}</div>
-      <ul class="rel-notes${dense ? ' dense' : ''}">${rels.map((e) => {
-        const o = byId[e.other], k = KINDS[e.kind];
-        return `<li><span class="rn-k" style="--c:${catOf(o).color}">${k.ja}</span>
-          <a class="xl rn-n" data-to="${o.id}">${o.ja}</a>
-          <span class="rn-t">${r2.relNotes[e.other] ?? ''}</span></li>`;
+      <div class="sec-h">関係<span class="rel-see">${sheetsOf(f.id)}</span></div>
+      <ul class="rel-rows${dense ? ' dense' : ''}">${rels.map((e) => {
+        const o = byId[e.other], k = KINDS[e.kind], oc = catOf(o);
+        return `<li>
+          <span class="rr-k">${k.ja}</span>
+          <span class="rr-em" style="--c:${oc.color}">${emblem(o.emblem, {
+            scale: cal[o.id] ?? 1, extinct: o.extinct, color: oc.color,
+          }).replace(/<svg[^>]*>/, '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">')}</span>
+          <a class="xl rr-n" data-to="${o.id}">${o.ja}</a>
+          <span class="rr-t">${r2.relNotes[e.other] ?? ''}</span></li>`;
       }).join('')}</ul>
     </div>
 
@@ -231,17 +243,22 @@ export const spread2Css = () => artworkCss() + `
 .gaps { font-size:2.95mm; line-height:calc(var(--lead)*0.94); text-indent:0;
         background:#f0eee7; padding:2.6mm 3mm; border-left:.6mm solid var(--ink-weak); }
 
-/* 関係の註。図式は残し、経緯だけを一行で添える。 */
+/* 関係。図は巻末の二十四枚に集めたので、ここは行だけを持つ。
+   相関図の札の中の「関係の行」と、同じ並び（語・紋章・名・註）にしてある。 */
 .rec-rel2 { margin-top:calc(var(--lead)*1.2); }
-.rel-notes { list-style:none; margin-top:1.6mm; }
-.rel-notes li { display:flex; align-items:baseline; gap:2.4mm; font-size:2.7mm;
-                line-height:calc(var(--lead)*0.86); padding:1mm 0;
-                border-bottom:.15mm solid var(--rule); }
-.rn-k { width:8mm; flex:none; color:var(--c); font-size:2.4mm; letter-spacing:.1em; }
-.rn-n { width:34mm; flex:none; font-weight:500; }
-.rn-t { color:var(--ink-mid); }
+.rel-see { float:right; font-size:2.2mm; letter-spacing:.04em; color:var(--ink-weak);
+           font-weight:400; }
+.rel-rows { list-style:none; margin-top:1.6mm; }
+.rel-rows li { display:flex; align-items:center; gap:2.2mm; font-size:2.7mm;
+               line-height:calc(var(--lead)*0.8); padding:1.1mm 0;
+               border-bottom:.15mm solid var(--rule); }
+.rr-k { width:8mm; flex:none; font-size:2.4mm; letter-spacing:.1em; }
+.rr-em { width:4.6mm; height:4.6mm; flex:none; display:block; }
+.rr-em svg { width:100%; height:100%; display:block; }
+.rr-n { width:32mm; flex:none; font-weight:500; }
+.rr-t { color:var(--ink-mid); font-size:2.55mm; }
 /* 辺が九本を超える項（帝国軍・サルモール）。行を詰めて版面に収める。 */
-.rel-notes.dense li { font-size:2.5mm; line-height:calc(var(--lead)*0.72); padding:.5mm 0; }
-.rel-notes.dense .rn-k { font-size:2.2mm; }
-.rel-notes.dense .rn-n { width:31mm; }
+.rel-rows.dense li { font-size:2.5mm; padding:.6mm 0; }
+.rel-rows.dense .rr-em { width:4mm; height:4mm; }
+.rel-rows.dense .rr-t { font-size:2.4mm; }
 `;

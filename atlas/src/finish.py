@@ -215,26 +215,46 @@ def inspect(path: Path, expect_pages: int):
     reader = PdfReader(str(path))
     fonts, embedded, not_embedded, type3 = {}, set(), set(), set()
 
-    for page in reader.pages:
-        res = page.get("/Resources")
-        if not res:
-            continue
+    # Chromium は頁の中身を Form XObject に入れる。書体はその中の
+    # /Resources に載るので、頁の /Resources だけを見ると一つも見つからない。
+    # 初版ではここで「書体 0 種」と出ていた。埋め込みは出来ていたので気づけなかった。
+    seen_xobj = set()
+
+    def scan(res, depth=0):
+        if not res or depth > 6:
+            return
+        res = res.get_object()
         fdict = res.get("/Font")
-        if not fdict:
-            continue
-        for f in fdict.values():
-            f = f.get_object()
-            base = str(f.get("/BaseFont", "?"))
-            if f.get("/Subtype") == "/Type3":
-                type3.add(base)
-            desc = f.get("/FontDescriptor")
-            if desc is None and f.get("/DescendantFonts"):
-                desc = f["/DescendantFonts"][0].get_object().get("/FontDescriptor")
-            has = bool(desc) and any(
-                k in desc.get_object() for k in ("/FontFile", "/FontFile2", "/FontFile3")
-            )
-            fonts[base] = has
-            (embedded if has else not_embedded).add(base)
+        if fdict:
+            for f in fdict.get_object().values():
+                f = f.get_object()
+                base = str(f.get("/BaseFont", "?"))
+                if f.get("/Subtype") == "/Type3":
+                    type3.add(base)
+                desc = f.get("/FontDescriptor")
+                if desc is None and f.get("/DescendantFonts"):
+                    desc = f["/DescendantFonts"][0].get_object().get("/FontDescriptor")
+                has = bool(desc) and any(
+                    k in desc.get_object()
+                    for k in ("/FontFile", "/FontFile2", "/FontFile3")
+                )
+                fonts[base] = has
+                (embedded if has else not_embedded).add(base)
+        xo = res.get("/XObject")
+        if not xo:
+            return
+        for ref in xo.get_object().values():
+            key = getattr(ref, "idnum", None)
+            if key is not None:
+                if key in seen_xobj:
+                    continue
+                seen_xobj.add(key)
+            o = ref.get_object()
+            if o.get("/Subtype") == "/Form":
+                scan(o.get("/Resources"), depth + 1)
+
+    for page in reader.pages:
+        scan(page.get("/Resources"))
 
     text = "".join((p.extract_text() or "") for p in reader.pages)
     annots = sum(

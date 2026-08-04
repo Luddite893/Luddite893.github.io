@@ -13,7 +13,7 @@ import { categories, factions, byCat } from './factions.mjs';
 import { records, TAGS } from './records.mjs';
 import { emblem } from './heraldry.mjs';
 import { catDiagram } from './diagram.mjs';
-import { card as relCard, categorySheets } from './relmap.mjs';
+import { card as relCard, categorySheets, themeSheet } from './relmap.mjs';
 import { THEMES } from './relmap-data.mjs';
 import { edges, edgesOf, KINDS, hostileDegree } from './relations.mjs';
 import { tamrielMap, skyrimMap, distributionMap, PROVINCES } from './map.mjs';
@@ -362,6 +362,62 @@ export const masterR = (folio) => sheet('recto', `
     名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。</p>`,
   { head: mhead('相関図について', 'recto'), folio });
 
+// ── 相関図の扉（二頁） ───────────────────────────
+export const relIntroL = (folio) => sheet('verso', `
+  <h2 class="mh">相関図</h2>
+  <p class="lg-lead">本編の各項は、その組織の関係を行として持っている。
+    ここに集めた二十四枚は、それを図として組み直したものである。
+    <b>同じ関係を、二度、別の形で読めるようにしてある。</b></p>
+
+  <h3>札の読み方</h3>
+  <div class="rk-card"><svg viewBox="0 0 47 30" xmlns="http://www.w3.org/2000/svg"
+    font-family="Noto Serif JP, serif">${relCard('legion', 1, 0.5, {
+    rows: [{ kind: 'hostile', other: 'stormcloaks', side: 1 },
+           { kind: 'vassal', other: 'thalmor', side: 1 },
+           { kind: 'ally', other: 'eastempire', side: -1 }] })}</svg></div>
+  <ol class="rk-list">
+    <li><b>札の頭</b>　紋章・組織名・肩書・所在。これだけで、その組織が何者かが分かる。</li>
+    <li><b>関係の行</b>　語と相手の名。<b>線を辿らずとも関係が読める。</b></li>
+    <li><b>線</b>　行の縁から出て、相手の行の縁へ入る。直交でのみ引く。
+      <b>線の上には文字を一つも置かない。</b></li>
+    <li><b>矢</b>　従属は上位を、派生は母体を指す。向きを持つのはこの二つだけである。</li>
+  </ol>
+  <p class="lg-note">語を線の中ほどに置く方式は採らなかった。
+    一枚の札から線が n 本出れば語も n 個要るが、札の縁は十三ミリしかない。
+    語は四ミリ強あるので、三本を超えたところで必ず重なる。
+    束になった線の脇に語が並ぶと、どの語がどの線のものか分からなくなる。</p>`,
+  { head: mhead('相関図', 'verso'), folio });
+
+export const relIntroR = (folio) => sheet('recto', `
+  <h3>二十四枚の並び</h3>
+  <div class="g rk-idx">
+    <div class="c3"><h4>主題別　八枚</h4><ul>${THEMES.map((t) =>
+      `<li><span class="rk-n">${t.n}</span>${t.ja}</li>`).join('')}</ul></div>
+    <div class="c3"><h4>分類別　十六枚</h4><ul>${categories.map((c) => {
+      const n = categorySheets(c).length;
+      return `<li><span class="rk-n" style="--c:${c.color}">${c.n}</span>${c.ja}`
+        + (n > 1 ? `<b>${'一二三四五'[n - 1]}枚</b>` : '') + `</li>`;
+    }).join('')}</ul></div>
+  </div>
+  <p class="lg-note">分類は「その組織が何であるか」の区分であって、
+    「何が起きているか」の区分ではない。内戦を追う読者は分類 II の頁だけでは足りない。
+    名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。</p>
+
+  <h3>分類別の図の割り方</h3>
+  <p class="lg-lead">札の高さは関係の数で決まる。辺を十三本持つ帝国軍の札は七十ミリになり、
+    分類 II の六項を一枚に並べると中央の列だけで版面を超える。
+    そこで<b>相手ではなく成員のほうで割った</b>。
+    どの組織も「自分の関係が全部見える一枚」を必ず持っている。</p>
+  <p class="lg-note">左右に置いた組織の関係は、その組織の属する分類の図に出る。
+    一枚に相手の関係まで引くと、中央の組織が線に埋もれるためである。</p>`,
+  { head: mhead('相関図', 'recto'), folio });
+
+// ── 相関図の頁 ───────────────────────────────────
+// 二十四枚を巻末にまとめる。各項の四頁目から、この節へ案内している。
+export const relSheet = (theme, side, folio) => sheet(side, `
+  <div class="rs">${themeSheet(theme)}</div>`,
+  { head: mhead('相関図', side), folio });
+
 // ── 12-13　地図（全図・九領図） ──────────────────
 export const mapTamriel = (folio) => sheet('verso', `
   <h2 class="mh">図一　タムリエル全図</h2>
@@ -610,6 +666,8 @@ h3 { font-size:3.6mm; font-weight:600; letter-spacing:.06em; margin:calc(var(--l
                      margin-bottom:calc(var(--lead)*0.8); }
 
 /* 相関図について（前付）。札の見本と十九枚の内訳。 */
+.rs { margin-top:-2mm; }
+.rs svg { width:174mm; display:block; }
 .rk-card { margin:2mm 0 4mm; width:94mm; }
 .rk-card svg, .rk-card > g { overflow:visible; }
 .rk-list { list-style:none; margin:0 0 3mm; }

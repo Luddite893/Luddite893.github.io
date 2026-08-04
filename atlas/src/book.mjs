@@ -1,6 +1,7 @@
 // 一冊に組む
 //
-// 頁は 140 頁。丁合いの都合で四の倍数に揃えてある。
+// 第二版は 264 頁。丁合いの都合で四の倍数に揃えてある。
+//   前付 17 ／ 本編 49 項 × 4 頁 ＋ 分類扉 14 ／ 相関図 26 ／ 後付 11
 //
 // ノンブルの偶奇が命である。見開きは必ず「偶数＝左」「奇数＝右」で始まる。
 // 一頁ずれると、四十九の見開きがすべて割れる。
@@ -11,7 +12,10 @@ import { G, css } from './grid.mjs';
 import { categories, factions, byCat } from './factions.mjs';
 import { records } from './records.mjs';
 import { plateOf } from './plates.mjs';
-import { spreadPages, spreadCss, edgeTab } from './spread.mjs';
+import { spreadCss, edgeTab } from './spread.mjs';
+import { spread2, spread2Css } from './spread2.mjs';
+import { categorySheets, relmapCss } from './relmap.mjs';
+import { THEMES } from './relmap-data.mjs';
 import { distributionMap, SEATS, HOLDS, PROVINCES } from './map.mjs';
 import { plateStats } from './plates.mjs';
 import * as M from './matter.mjs';
@@ -45,10 +49,19 @@ for (const c of categories) {
   put('catTitle', { side: 'verso', cat: c.id });
   put('catOver', { side: 'recto', cat: c.id });
   for (const f of byCat(c.id)) {
-    put('entryL', { side: 'verso', id: f.id });
-    put('entryR', { side: 'recto', id: f.id });
+    // 第二版は一項四頁。図版面／名称と概要／沿革と内情／評判と関係。
+    put('e1', { side: 'verso', id: f.id });
+    put('e2', { side: 'recto', id: f.id });
+    put('e3', { side: 'verso', id: f.id });
+    put('e4', { side: 'recto', id: f.id });
   }
 }
+
+// 相関図。主題別八枚と分類別十六枚を巻末にまとめる。
+const REL = [...THEMES, ...categories.flatMap((c) => categorySheets(c))];
+put('relTitle', { side: 'verso' });
+put('relTitle2', { side: 'recto' });
+REL.forEach((t, i) => put('relSheet', { side: i % 2 ? 'recto' : 'verso', t: i }));
 
 put('doorTable', { side: 'verso' });
 put('doorTable', { side: 'recto' });
@@ -71,7 +84,7 @@ if (slots.length % 4) { console.error(`総頁 ${slots.length} は四の倍数で
 
 // 項 → その項の右頁のノンブル
 const folioOf = {};
-slots.forEach((s, i) => { if (s.kind === 'entryR') folioOf[s.id] = i + 1; });
+slots.forEach((s, i) => { if (s.kind === 'e2') folioOf[s.id] = i + 1; });
 const FO = (id) => folioOf[id] ?? '—';
 
 // ── 二　総索引の項目 ────────────────────────────
@@ -130,12 +143,20 @@ const render = (s, i) => {
       const c = categories.find((x) => x.id === s.cat);
       return M.catOverview(c, edgeTab(c, true), FO, showFolio);
     }
-    case 'entryL': case 'entryR': {
+    case 'e1': case 'e2': case 'e3': case 'e4': {
+      // 四頁は spread2() が一度に返す。頁ごとに呼び直すと図版が四度作られる。
       const f = factions.find((x) => x.id === s.id);
-      const n = s.kind === 'entryL' ? folio : folio - 1;
-      const [L, R] = spreadPages(f, plateOf(f), n, n + 1);
-      return s.kind === 'entryL' ? L : R.replace('class="sheet recto"', `class="sheet recto" id="f-${f.id}"`);
+      const k = +s.kind[1] - 1;
+      const first = folio - k;
+      const pages = spread2(f, plateOf(f), first);
+      // 二頁目に錨を打つ。組織名の内部リンクはここへ飛ぶ。
+      return k === 1
+        ? pages[1].replace('class="sheet recto"', `class="sheet recto" id="f-${f.id}"`)
+        : pages[k];
     }
+    case 'relTitle':  return M.relIntroL(showFolio);
+    case 'relTitle2': return M.relIntroR(showFolio);
+    case 'relSheet':  return M.relSheet(REL[s.t], s.side, showFolio);
     case 'doorTable':    return M.doorTable(s.side, FO, showFolio);
     case 'peopleIndex':  return M.peopleIndex(s.side, FO, showFolio);
     case 'generalIndex': return M.generalIndex(s.side, showFolio, showFolio, terms);
@@ -153,7 +174,7 @@ const body = slots.map(render).join('\n');
 export function build({ bleed = 0, marks = 0, file = 'book.html' } = {}) {
   const html = `<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <title>タムリエル勢力誌</title>
-<style>${css({ bleed, marks })}${spreadCss()}${M.matterCss()}
+<style>${css({ bleed, marks })}${spreadCss()}${spread2Css()}${relmapCss()}${M.matterCss()}
 body { background:#d8d5cc; }
 ${marks ? marksCss() : ''}
 </style></head><body>${body}</body></html>`;
@@ -190,7 +211,7 @@ export function manifest() {
       { title: '目次', page: 4 },
       { title: '序', page: 6 },
       { title: '読み方・凡例', page: 8 },
-      { title: '全体相関図', page: 10 },
+      { title: '相関図について', page: 10 },
       { title: '地図', page: 12 },
       { title: '勢力分布図', page: 14 },
       { title: '年表', page: 16 },
@@ -199,6 +220,11 @@ export function manifest() {
         page: slots.findIndex((s) => s.kind === 'catTitle' && s.cat === c.id) + 1,
         children: byCat(c.id).map((f) => ({ title: f.ja, page: folioOf[f.id] - 1 })),
       })),
+      { title: '相関図', page: slots.findIndex((s) => s.kind === 'relTitle') + 1,
+        children: REL.map((t, i) => ({
+          title: `${t.kind ?? '主題'} ${t.n}　${t.ja}`,
+          page: slots.findIndex((s) => s.kind === 'relSheet' && s.t === i) + 1,
+        })) },
       { title: '門戸・排他関係一覧', page: slots.findIndex((s) => s.kind === 'doorTable') + 1 },
       { title: '人物索引', page: slots.findIndex((s) => s.kind === 'peopleIndex') + 1 },
       { title: '総索引', page: slots.findIndex((s) => s.kind === 'generalIndex') + 1 },
