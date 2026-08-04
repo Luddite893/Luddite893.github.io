@@ -35,10 +35,12 @@
 
 import { cat1 } from './records2/cat1.mjs';
 import { cat2 } from './records2/cat2.mjs';
+import { cat3 } from './records2/cat3.mjs';
 
 export const records2 = {
   ...cat1,
   ...cat2,
+  ...cat3,
 };
 
 // 文字数の検査。仕様の枠に収まっているかを機械で見る。
