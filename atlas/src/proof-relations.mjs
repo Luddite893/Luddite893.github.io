@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-import { masterDiagram, egoDiagram } from './diagram.mjs';
+import { egoDiagram } from './diagram.mjs';
 import { stats, KINDS, edgesOf } from './relations.mjs';
 import { factions } from './factions.mjs';
 
@@ -49,7 +49,7 @@ h2{font-size:3.6mm;letter-spacing:.12em;margin:6mm 0 3mm;border-bottom:.3mm soli
 同盟・従属・派生・反目は近傍に閉じるので外周の短い弧で描く。全種を弦にすると中央が潰れる。<br>
 弦は墨一色。分類色は扇の帯にのみ乗せる。線に色を付けると、色が分類と関係の二つを意味してしまう。<br>
 各ノードの外に、敵対の数だけ刻みを打ってある。線を数えずに誰が四面楚歌かが分かる。</p>
-<div class="master">${masterDiagram({ size: 900 })}</div>
+<p>全体相関図は第二版で廃した。相関図の校正は proof-relmap.mjs を用いる。</p>
 
 <h2>三　各項の「関係」欄に入る自我図</h2>
 <div class="egos">${samples.map((id) => {

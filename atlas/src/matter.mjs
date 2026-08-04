@@ -12,7 +12,9 @@ import { G, span } from './grid.mjs';
 import { categories, factions, byCat } from './factions.mjs';
 import { records, TAGS } from './records.mjs';
 import { emblem } from './heraldry.mjs';
-import { masterDiagram, catDiagram } from './diagram.mjs';
+import { catDiagram } from './diagram.mjs';
+import { card as relCard, categorySheets } from './relmap.mjs';
+import { THEMES } from './relmap-data.mjs';
 import { edges, edgesOf, KINDS, hostileDegree } from './relations.mjs';
 import { tamrielMap, skyrimMap, distributionMap, PROVINCES } from './map.mjs';
 import { eras, events, refNums } from './chronicle.mjs';
@@ -317,20 +319,48 @@ export const masterL = (folio) => {
   <p class="lg-note">数字は敵対関係の本数である。上位十項のうち六項が、分類 II「国家・軍事」
     または分類 III「敵対組織」に属する。州内の対立が、信仰や商いではなく
     統治の帰属をめぐって生じていることを示す。</p>`,
-  { head: mhead('全体相関図', 'verso'), folio });
+  { head: mhead('関係の統計', 'verso'), folio });
 };
 
+// 円環の全体相関図は第二版で廃した。四十九点を一枚に収めたが、
+// 弦が中央で束になり、どの線がどこへ行くのか追えなかったためである。
+// 代わりに、相関図の読み方と十九枚の内訳をここに置く。
 export const masterR = (folio) => sheet('recto', `
-  <div class="md-fig">${masterDiagram({ size: 1240 })}</div>
-  <p class="md-cap">図四　全体相関図。外周の帯は分類、節点は組織、内側の線は敵対、
-    外周の弧はそれ以外の関係を示す。節点の外の刻みは、その組織の関係の総数である。</p>
-  <div class="md-key">${categories.map((c) => `
-    <div class="mdk" style="--c:${c.color}"><span class="mdk-b"></span>
-      <span class="mdk-n">${c.n}</span><span class="mdk-j">${c.ja}</span>
-      <span class="mdk-r">${(() => { const l = byCat(c.id); return `${NUM(l[0])}–${NUM(l[l.length - 1])}`; })()}</span></div>`).join('')}</div>
-  <p class="lg-note">節点は本編の並び順に、分類 I の先頭から時計回りに置いた。
-    円環上の位置は本編の頁順に対応するので、この図から本編を引くことができる。</p>`,
-  { head: mhead('全体相関図', 'recto'), folio });
+  <h3>相関図の読み方</h3>
+  <div class="rk-card"><svg viewBox="0 0 47 30" xmlns="http://www.w3.org/2000/svg"
+    font-family="Noto Serif JP, serif">${relCard('legion', 1, 0.5, {
+    rows: [{ kind: 'hostile', other: 'stormcloaks', side: 1 },
+           { kind: 'vassal', other: 'thalmor', side: 1 },
+           { kind: 'ally', other: 'eastempire', side: -1 }] })}</svg></div>
+  <ol class="rk-list">
+    <li><b>札</b>　紋章・組織名・肩書・所在の四つを札の頭に入れた。
+      札を見れば、その組織が何者かが分かる。凡例へ戻る必要はない。</li>
+    <li><b>関係の行</b>　札の下半分に、その組織が持つ関係を一行ずつ並べた。
+      <b>語と相手の名がその場にある</b>ので、線を辿らずとも関係が読める。</li>
+    <li><b>線</b>　行の縁から出て、相手の行の縁へ入る。直交でのみ引く。
+      <b>線の上には文字を一つも置かない。</b>
+      束になった線の脇に語を並べると、どの語がどの線のものか分からなくなるためである。</li>
+    <li><b>矢</b>　従属は上位を、派生は母体を指す。この二つだけが向きを持つ。</li>
+  </ol>
+  <p class="lg-note">初版では、線の中ほどに語の小札を置いていた。
+    一枚の札から線が n 本出るとき語も n 個要るが、札の縁は十三ミリしかない。
+    語は四ミリ強あるので、三本を超えたところで必ず重なる。
+    第二版では語を線から降ろし、札の中の行に移した。</p>
+
+  <h3>十九枚の内訳</h3>
+  <div class="g rk-idx">
+    <div class="c3"><h4>主題別　八枚</h4><ul>${THEMES.map((t) =>
+      `<li><span class="rk-n">${t.n}</span>${t.ja}</li>`).join('')}</ul></div>
+    <div class="c3"><h4>分類別　十一枚</h4><ul>${categories.map((c) => {
+      const n = categorySheets(c).length;
+      return `<li><span class="rk-n" style="--c:${c.color}">${c.n}</span>${c.ja}`
+        + (n > 1 ? `<b>${'一二三四'[n - 1]}枚</b>` : '') + `</li>`;
+    }).join('')}</ul></div>
+  </div>
+  <p class="lg-note">分類は「その組織が何であるか」の区分であって、
+    「何が起きているか」の区分ではない。内戦を追う読者は分類 II の頁だけでは足りない。
+    名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。</p>`,
+  { head: mhead('相関図について', 'recto'), folio });
 
 // ── 12-13　地図（全図・九領図） ──────────────────
 export const mapTamriel = (folio) => sheet('verso', `
@@ -578,6 +608,21 @@ export const matterCss = () => `
 h3 { font-size:3.6mm; font-weight:600; letter-spacing:.06em; margin:calc(var(--lead)*1) 0 calc(var(--lead)*0.4); }
 .lg-lead, .md-lead { font-size:3mm; line-height:var(--lead); color:var(--ink-mid);
                      margin-bottom:calc(var(--lead)*0.8); }
+
+/* 相関図について（前付）。札の見本と十九枚の内訳。 */
+.rk-card { margin:2mm 0 4mm; width:94mm; }
+.rk-card svg, .rk-card > g { overflow:visible; }
+.rk-list { list-style:none; margin:0 0 3mm; }
+.rk-list li { font-size:3mm; line-height:1.62; margin-bottom:1.4mm; text-indent:-4.6mm;
+              padding-left:4.6mm; }
+.rk-list b { font-weight:600; }
+.rk-idx h4 { font-size:2.7mm; letter-spacing:.16em; color:var(--ink-weak);
+             border-bottom:.2mm solid var(--rule); padding-bottom:.8mm; margin-bottom:1.6mm; }
+.rk-idx ul { list-style:none; }
+.rk-idx li { font-size:2.8mm; line-height:1.72; display:flex; align-items:baseline; gap:2mm; }
+.rk-idx b { margin-left:auto; font-size:2.3mm; color:var(--ink-weak); font-weight:400; }
+.rk-n { display:inline-block; width:5mm; color:var(--c,#8b8880); font-size:2.4mm;
+        letter-spacing:.06em; }
 .lg-note { font-size:2.8mm; line-height:calc(var(--lead)*0.86); color:var(--ink-mid); margin-top:2mm; }
 .dots { flex:1; border-bottom:.15mm dotted var(--rule); margin:0 1.5mm; transform:translateY(-1mm); }
 .tp2, .co-p { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.9mm; color:var(--ink-mid); }

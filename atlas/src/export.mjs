@@ -15,7 +15,9 @@ import { emblem } from './heraldry.mjs';
 import { plates, plateOf } from './plates.mjs';
 import { scene, cut, CUTS, STRUCTURES } from './scene.mjs';
 import { bust } from './busts.mjs';
-import { egoDiagram, masterDiagram, catDiagram } from './diagram.mjs';
+import { egoDiagram, catDiagram } from './diagram.mjs';
+import { themeSheet, categorySheets } from './relmap.mjs';
+import { THEMES } from './relmap-data.mjs';
 import { tamrielMap, skyrimMap, distributionMap, miniMap } from './map.mjs';
 import { edges } from './relations.mjs';
 import cal from './calibration.json' with { type: 'json' };
@@ -84,7 +86,14 @@ const put = (path, svg, note) => { writeFileSync(path, wrap(svg, note)); n++; };
 // ── 五　図式 ────────────────────────────────
 {
   const d = dir('図式/');
-  put(d + '00_全体相関図.svg', masterDiagram({ size: 1240 }), `全 49 項・関係 ${edges.length} 件`);
+  // 円環の全体相関図は第二版で廃した。主題別・分類別の十九枚を出す。
+  THEMES.forEach((t, i) => put(d + `主題${String(i + 1).padStart(2, '0')}_${t.ja}.svg`,
+    themeSheet(t), `札 ${t.nodes.length} 点`));
+  for (const c of categories) {
+    for (const [i, t] of categorySheets(c).entries()) {
+      put(d + `分類${c.n}_相関図${i ? '_' + (i + 1) : ''}.svg`, themeSheet(t), `札 ${t.nodes.length} 点`);
+    }
+  }
   categories.forEach((c) => {
     put(d + `分類${c.n}_関係の行き先.svg`, catDiagram(c.id, { w: 174, h: 118 }),
       `分類 ${c.n} ${c.ja}　二部グラフ`);
