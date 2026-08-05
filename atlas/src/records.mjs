@@ -982,6 +982,165 @@ export const records = {
     ],
     quote: '飛ぶ順序が決まっている。決めている者がいる、ということだ。',
   },
+
+  // ══ VIII. 領邦・宮廷 ═════════════════════════════
+  // 九つの領の「門戸」は、いずれも「試練による」である。
+  // 九つとも同じ値になった。これは記述の手抜きではなく、この州の統治の形である。
+  // 首長の座は血によって継がれるが、宮廷に加わる道——従士（セイン）の位——は、
+  // 領への功によってのみ開く。生まれで宮廷に入る者はおらず、
+  // 願い出て入る者もいない。九領のすべてがこの一点で揃っている。
+  holdHaafingar: {
+    door: 'trial', scale: 'great', reach: 'hold', state: 'active',
+    summary: '州の北西端、カース川の河口に架かる巨大な岩橋の上に市を置く領。帝国の州総督府と帝国軍の州司令部が同居し、白金協定以後は事実上の州都として扱われる。港は年を通して凍らず、東帝都社の州内取引の大半がここを経由する。首長の座はソリチュード家の血によって継がれるが、現首長エリシフは先代の妻であって、その血の外から座に着いた。この一事が、州の内戦において当領の正統性を問う根拠として繰り返し持ち出されている。宮廷は帝国側の助言者を常置し、領の裁定に帝国の意向が入る度合いは九領のうちで最も高い。',
+    aims: [
+      '港と岩橋を保ち、州外との交通を絶やさぬこと',
+      '帝国の州統治の拠点であり続けること',
+      '首長の座の継承に生じた疑義を、内戦の決着まで争わせぬこと',
+    ],
+    seat: 'ソリチュード', seatNote: 'ハーフィンガル領',
+    people: [
+      { ja: 'エリシフ', race: 'nord', headgear: 'circlet', hair: 'long', garment: 'robe', note: '首長。先代トリグの妻' },
+      { ja: 'ファルク・ファイアビアード', race: 'nord', headgear: 'none', hair: 'long', garment: 'robe', note: '執政。実務を握る' },
+      { ja: 'ボルガンヤ', race: 'nord', headgear: 'none', hair: 'braid', garment: 'plate', note: '護衛官（ハスカール）' },
+      { ja: 'シビ・ブラック＝ブライア', race: 'nord', headgear: 'none', hair: 'short', garment: 'leather', note: '宮廷詩人。リフテンの家の出' },
+    ],
+    quote: '首長は座っておられる。政は執政が行う。両方とも本当のことである。',
+  },
+  holdEastmarch: {
+    door: 'trial', scale: 'great', reach: 'hold', state: 'active',
+    summary: '州の東部、白の川の河口に石造の市を置く領。人の手になる市としては州内で最も古く、市壁の下層はイスグラモルの代に積まれたものとされる。王の宮と呼ばれる大広間を首長の座とし、現首長ウルフリックは同時にストームクロークの首魁である。領の統治と反乱の指揮が同一の人物に集まっているため、当領では宮廷の記録と軍の記録が分離していない。市内には灰の落ちるモロウウィンドから逃れたダンマーの区画があり、市壁の外に置かれている。この配置をめぐる申し立てが、市政の記録に断続的に現れる。',
+    aims: [
+      '古き市の形と、その積み方を変えぬこと',
+      '州の統治をノルドの手に戻すこと',
+      '首長の座と軍の指揮を分けぬこと',
+    ],
+    seat: 'ウィンドヘルム', seatNote: 'イーストマーチ領',
+    people: [
+      { ja: 'ウルフリック', race: 'nord', headgear: 'none', hair: 'long', garment: 'fur', note: '首長。蜂起の首謀' },
+      { ja: 'ヨルレイフ', race: 'nord', headgear: 'none', hair: 'short', garment: 'robe', note: '執政。市政の実務' },
+      { ja: 'ガルマル', race: 'nord', headgear: 'helm', hair: 'long', garment: 'plate', note: '副将。軍の指揮' },
+      { ja: 'ウーンフェルス', race: 'nord', headgear: 'none', hair: 'short', garment: 'leather', note: '宮廷の鍛冶' },
+    ],
+    quote: 'この石を積んだ者の名を言えぬ者に、この市を語る資格はない。',
+  },
+  holdWhiterun: {
+    door: 'trial', scale: 'great', reach: 'hold', state: 'active',
+    summary: '州の中央、白きヴァルガルの平原に市を置く領。九領のいずれとも境を接し、州内の街道はほとんどがこの市を通る。丘の頂に建つ大広間は竜の顎を架したものと伝えられ、その名で呼ばれる。首長バルグルーフは内戦において帝国・ストームクロークのいずれにも与せぬ立場を公にしており、九領のうちでこの立場を保っている唯一の領である。中立は理念ではなく位置の結果でもある。市内では帝国派のバトル・ボーン家とタロス派のグレイ・メーン家が公然と分かれており、宮廷はその双方を席に置いている。',
+    aims: [
+      '街道の交わる位置を保ち、いずれの側にも門を閉ざさぬこと',
+      '市内に分かれた二家を、いずれも宮廷から外さぬこと',
+      '丘の大広間と、そこに架けられたものを損なわぬこと',
+    ],
+    seat: 'ホワイトラン', seatNote: 'ホワイトラン領',
+    people: [
+      { ja: 'バルグルーフ', race: 'nord', headgear: 'none', hair: 'long', garment: 'fur', note: '首長。中立を掲げる' },
+      { ja: 'プロヴェントゥス・アヴェニッチ', race: 'human', headgear: 'none', hair: 'short', garment: 'robe', note: '執政。帝国の出' },
+      { ja: 'イリレス', race: 'elf', headgear: 'none', hair: 'braid', garment: 'plate', note: '護衛官。ダンマー' },
+      { ja: 'フレンガー', race: 'nord', headgear: 'hood', hair: 'long', garment: 'robe', note: '宮廷魔術師' },
+    ],
+    quote: '道が交わる場所に立つ者は、どちらへも行けるが、どこへも行けぬ。',
+  },
+  holdReach: {
+    door: 'trial', scale: 'great', reach: 'hold', state: 'active',
+    summary: '州の西端、峡谷の岩壁そのものを刳り抜いて市とした領。市の構造はドワーフの遺構を人が継いで用いたもので、階段と水路の大半は人の手になるものではない。銀の坑を持ち、州内の銀の産出はほぼこの領に集まる。坑と市の実権はシルバー・ブラッド家が握っており、首長イグムンドの宮廷は同家の資力の上に立つ。土地の旧来の住民は現在フォースウォーンと呼ばれ、領の統治を認めていない。第四紀一八八年の事変以後、市内での襲撃と鎮圧は絶えたことがなく、市門の記録は現在も日ごとに付けられている。',
+    aims: [
+      '銀の坑を止めぬこと',
+      '峡谷の市を、外からの手に渡さぬこと',
+      '土地の旧来の住民との係争を、領の外へ持ち出さぬこと',
+    ],
+    seat: 'マルカルス', seatNote: 'リーチ領',
+    people: [
+      { ja: 'イグムンド', race: 'nord', headgear: 'circlet', hair: 'short', garment: 'robe', note: '首長。父を蜂起で失う' },
+      { ja: 'ラガタール', race: 'orc', headgear: 'none', hair: 'topknot', garment: 'plate', note: '護衛官。オーク' },
+      { ja: 'ファレンガー', race: 'nord', headgear: 'none', hair: 'short', garment: 'mail', note: '衛兵長。市門の記録を付ける' },
+      { ja: 'カルセルモ', race: 'elf', headgear: 'none', hair: 'none', garment: 'robe', note: '宮廷魔術師。遺構の解読' },
+    ],
+    quote: '我らはこの市を建てていない。住んでいるだけである。',
+  },
+  holdRift: {
+    door: 'trial', scale: 'mid', reach: 'hold', state: 'active',
+    summary: '州の南東、湖と黄葉の森に囲まれた領。市は湖岸に杭を打って建てられており、水路が市街を貫く。モロウウィンドとシロディールへ抜ける二つの街道の分岐に当たるため、州内の陸運はこの市を避けて通れない。首長ラエロフの宮廷は帝国に与しているが、領の実務——市場の差配・衛兵の給・裁定の順序——はブラック・ブライア家の蜂蜜酒の資力を通して動いており、宮廷の決定と同家の意向が食い違った記録は本書の調査した範囲に無い。市の地下水路は盗賊ギルドの拠点として知られ、市政はこれを黙認している。',
+    aims: [
+      '二つの街道の分岐を保つこと',
+      '蜂蜜酒の醸造と、その取引の道を絶やさぬこと',
+      '地下で起きていることを、地上の記録に書かぬこと',
+    ],
+    seat: 'リフテン', seatNote: 'リフト領',
+    people: [
+      { ja: 'ラエロフ', race: 'nord', headgear: 'circlet', hair: 'long', garment: 'robe', note: '首長。帝国に与する' },
+      { ja: 'アニュース', race: 'nord', headgear: 'none', hair: 'short', garment: 'robe', note: '執政。市場の差配' },
+      { ja: 'ウンミッド', race: 'nord', headgear: 'none', hair: 'short', garment: 'plate', note: '護衛官' },
+      { ja: 'ハームフリッド', race: 'nord', headgear: 'none', hair: 'long', garment: 'mail', note: '衛兵長。地下に降りない' },
+    ],
+    quote: '市の下で何が起きているかは、市の記録には書かれない。',
+  },
+  holdFalkreath: {
+    door: 'trial', scale: 'mid', reach: 'hold', state: 'active',
+    summary: '州の南西、深い針葉樹の森に覆われた領。シロディールとの境を接し、州外への南の門にあたる。集落そのものは小さいが、州内で最も古く最も大きな墓地を持ち、領外から遺体を運び入れて葬る慣行が長く続いている。領の記録の中心は台帳ではなく墓標であり、当領の年代について問うとき、記録院はまず墓地の区画を数える。首長シッドゲイルは帝国に与しているが、その表明は内戦の開始から一年以上を経てのものであり、遅れの理由は宮廷の記録に記されていない。森には闇の一党の聖域があるとされ、領はその所在を確かめていない。',
+    aims: [
+      '墓地を絶やさず、区画を継ぎ足し続けること',
+      '南の境の道を通じさせておくこと',
+      '森の中で起きていることに、必要以上に立ち入らぬこと',
+    ],
+    seat: 'ファルクリース', seatNote: 'ファルクリース領',
+    people: [
+      { ja: 'シッドゲイル', race: 'nord', headgear: 'none', hair: 'short', garment: 'fur', note: '首長。帝国に与する' },
+      { ja: 'ネンヤ', race: 'elf', headgear: 'none', hair: 'long', garment: 'robe', note: '執政。ボズマー' },
+      { ja: 'ヘルヴァルド', race: 'nord', headgear: 'helm', hair: 'short', garment: 'plate', note: '護衛官' },
+      { ja: 'ルーンイル', race: 'nord', headgear: 'hood', hair: 'none', garment: 'robe', note: '墓守。区画を継ぐ' },
+    ],
+    quote: 'この領で数えるべきものは、生きている者の数ではない。',
+  },
+  holdPale: {
+    door: 'trial', scale: 'small', reach: 'hold', state: 'active',
+    summary: '州の北岸、凍らぬ港を一つだけ持つ領。市は港と坑のほかに産を持たず、住民の多くが漁と採掘に従事する。冬季には北から吹き込む風のため陸路が三月ほど絶えるが、港は氷を張らないので海路は通じる。この一点によって、当領は小領でありながら州外との連絡を保ち続けてきた。首長スカルドは内戦においてストームクロークに与している。第四紀一九〇年代の末より、住民が同一の夢を見るという届が市政に繰り返し出されており、市政はこれを記録に留めたまま、原因についての判断を示していない。',
+    aims: [
+      '凍らぬ港を保つこと',
+      '坑の産出を絶やさぬこと',
+      '住民の届を、判断を加えずに書き留め続けること',
+    ],
+    seat: 'ドーンスター', seatNote: 'ペイル領',
+    people: [
+      { ja: 'スカルド', race: 'nord', headgear: 'none', hair: 'long', garment: 'fur', note: '首長。蜂起に与する' },
+      { ja: 'ヨッド', race: 'nord', headgear: 'none', hair: 'short', garment: 'robe', note: '執政。届を受ける' },
+      { ja: 'バルグルーヴ', race: 'nord', headgear: 'helm', hair: 'short', garment: 'mail', note: '護衛官' },
+      { ja: 'フルーキ', race: 'nord', headgear: 'hood', hair: 'long', garment: 'robe', note: '宮廷の薬師。夢の届を集める' },
+    ],
+    quote: '同じ夢を見た者が三十七人いる。それだけを書いておく。',
+  },
+  holdWinterhold: {
+    door: 'trial', scale: 'small', reach: 'hold', state: 'active',
+    summary: '州の北東端。第二紀七五八年の大崩壊によって市街の大半が海に落ち、現在は数戸の家と、橋の先に残った学院のみが立つ領。領としての体裁は保たれているが、徴税の対象となる住民は九領で最も少なく、宮廷は首長と執政のほか常置の職を持たない。首長コルジールは領の窮乏の原因を学院に帰する立場を公にしており、学院との公式の往来は三百年にわたって無い。領の記録は崩壊以前のものが大半で、以後の三百年ぶんは合わせても崩壊前の一世紀に満たない。書くべきことが起きていないのではなく、書く者がいなくなったのである。',
+    aims: [
+      '領としての体裁を失わぬこと',
+      '崩壊以前の記録を、これ以上失わぬこと',
+      '学院との関係を、現在の状態のまま動かさぬこと',
+    ],
+    seat: 'ウィンターホールド', seatNote: 'ウィンターホールド領',
+    people: [
+      { ja: 'コルジール', race: 'nord', headgear: 'none', hair: 'long', garment: 'fur', note: '首長。学院に原因を帰する' },
+      { ja: 'マルール・セレス', race: 'elf', headgear: 'none', hair: 'short', garment: 'robe', note: '執政。ダンマー' },
+      { ja: 'トナル', race: 'nord', headgear: 'helm', hair: 'short', garment: 'mail', note: '護衛官。常置の兵はこの一名' },
+    ],
+    quote: '崩れた後のことは、誰も書かなかった。それが答えである。',
+  },
+  holdHjaalmarch: {
+    door: 'trial', scale: 'small', reach: 'hold', state: 'active',
+    summary: '州の北西、塩水の湿地に囲まれた領。集落は木造で、湿地に打った杭の上に建つ。産は泥炭と魚と、湿地に生える茸に限られ、九領のうちで最も貧しい。首長イドグロッド・ラヴンクローンは予見を語ることで知られ、宮廷の裁定にその語りが混じる。当人はこれを予見と呼ばず、「見えているものを言っているだけ」と述べる。領の記録には、他の八領には現れない種類の記述——夢・霧・水面に映るものについての届——が一貫して含まれており、記録院はこれを削らずに採録した。削れば、この領の記録がどういうものであるかが伝わらないためである。',
+    aims: [
+      '湿地の杭を打ち替え続けること',
+      '首長の語ったことを、そのまま書き留めること',
+      '領の外から来た者に、湿地を歩かせぬこと',
+    ],
+    seat: 'モーサル', seatNote: 'ヒャルマーク領',
+    people: [
+      { ja: 'イドグロッド', race: 'nord', headgear: 'none', hair: 'long', garment: 'robe', note: '首長。見えたことを語る' },
+      { ja: 'アスラン', race: 'khajiit', headgear: 'hood', hair: 'none', garment: 'robe', note: '執政。キャジート' },
+      { ja: 'ゴルム', race: 'nord', headgear: 'none', hair: 'short', garment: 'mail', note: '護衛官。首長の子' },
+      { ja: 'ファレルダ', race: 'nord', headgear: 'none', hair: 'braid', garment: 'leather', note: '湿地の案内。杭を打ち替える' },
+    ],
+    quote: '見えているものを言っているだけである。当たるかどうかは、別の話である。',
+  },
 };
 
 // 未執筆の項の受け皿。版面の検証は通り、校正刷りには「稿」の印が出る。

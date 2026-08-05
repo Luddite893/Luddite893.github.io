@@ -1,6 +1,7 @@
-// 収録組織 49
+// 収録組織 58
 //
-// 仕様書 6 のとおり、発注者側で確定済みの 49 組織。全名称を確定版で保持する。
+// 仕様書 6 のとおり、発注者側で確定済みの 49 組織。第二版で九つの領を加えて 58 とした。
+// 追加は末尾に置く。項番号は配列の位置から振るので、頭に挿すと既刊の番号がすべて動く。
 //
 // extinct: true の組織には、紋章に打ち消しの横線を与える
 // （仕様書 8「滅亡した組織には、紋章に打ち消しの線など統一した記号を」を採用）。
@@ -37,6 +38,8 @@ export const categories = [
     note: '容認されざる神格に仕えるか、儀礼を秘匿する組織。' },
   { n: 'VII', id: 7, ja: '部族・辺境・その他', en: 'GENTES EXTERAE',          color: '#6b563a', tone: '土色',
     note: '国家に属さず、血縁と土地によって成り立つ集団。' },
+  { n: 'VIII', id: 8, ja: '領邦・宮廷',   en: 'PRAEFECTURAE ET AULAE',   color: '#545c62', tone: '石色',
+    note: '首長を戴き、領域の統治を実際に行う九つの領と、その宮廷。' },
 ];
 
 // 副次記号。図象の周囲、固定の位置にのみ置く。
@@ -162,6 +165,32 @@ export const factions = [
     emblem: { charge: J(rotate(28, axe()), rotate(-28, axe())) } },
   { id: 'alduin', cat: 7, ja: 'アルドゥインの竜群', en: 'THE DRAGONS OF ALDUIN', alt: '世界を喰らう者の眷属',
     emblem: { charge: serpent() } },
+
+  // ══ VIII. 領邦・宮廷 ═════════════════════════════ 石色
+  // 九つの領は、他の分類の組織が「その上で」動いている場である。
+  // 項として立てなかった初版では、同胞団の項に「ホワイトラン領」と書いても、
+  // その領が何であるかを引く先が本書に無かった。
+  // 名は首長の座す市の名で立て、領の名を別称に置く。
+  // 領は市の周囲にしか及ばぬ土地を含むので、市の名で呼ぶほうが記録の用例に合う。
+  { id: 'holdHaafingar', cat: 8, ja: 'ソリチュード', en: 'SOLITUDE', alt: 'ハーフィンガル領',
+    // 岩橋。細い弧のままでは面積率が下限を割り、八ミリで消える。帯を厚く採る。
+    emblem: { charge: J(arc(40, 17, 190, 350), baseBar(22, 94, 5)), marks: dots(0) } },
+  { id: 'holdEastmarch', cat: 8, ja: 'ウィンドヘルム', en: 'WINDHELM', alt: 'イーストマーチ領',
+    emblem: { charge: knot(), marks: baseBar(24) } },
+  { id: 'holdWhiterun', cat: 8, ja: 'ホワイトラン', en: 'WHITERUN', alt: 'ホワイトラン領',
+    emblem: { charge: mountain(1, 88, 42), marks: dots(0) } },
+  { id: 'holdReach', cat: 8, ja: 'マルカルス', en: 'MARKARTH', alt: 'リーチ領',
+    emblem: { charge: gear(10, 34, 26, 11), marks: baseBar(22) } },
+  { id: 'holdRift', cat: 8, ja: 'リフテン', en: 'RIFTEN', alt: 'リフト領',
+    emblem: { charge: scales(), marks: baseBar(24) } },
+  { id: 'holdFalkreath', cat: 8, ja: 'ファルクリース', en: 'FALKREATH', alt: 'ファルクリース領',
+    emblem: { charge: antlers(3), marks: baseBar(24) } },
+  { id: 'holdPale', cat: 8, ja: 'ドーンスター', en: 'DAWNSTAR', alt: 'ペイル領',
+    emblem: { charge: star(8, 40, 15), marks: baseBar(24) } },
+  { id: 'holdWinterhold', cat: 8, ja: 'ウィンターホールド', en: 'WINTERHOLD', alt: 'ウィンターホールド領',
+    emblem: { charge: chevrons(), marks: dots(180) } },
+  { id: 'holdHjaalmarch', cat: 8, ja: 'モーサル', en: 'MORTHAL', alt: 'ヒャルマーク領',
+    emblem: { charge: standingStone(1), marks: baseBar(26) } },
 ];
 
 export const catOf = (f) => categories.find((c) => c.id === f.cat);

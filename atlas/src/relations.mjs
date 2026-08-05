@@ -112,6 +112,57 @@ export const edges = [
   ['orcstrongholds', 'bandits', 'hostile'],
   ['khajiitcaravans', 'bandits', 'hostile'],
   ['alduin', 'skaal', 'hostile'],
+
+  // ── 領邦・宮廷 ──
+  // 九領はいずれもムートに席を持つ。従属ではなく、ムートの側が九領で構成される。
+  // 向きを「領 → ムート」の従属で引くのは、席を持つことが領の側の資格だからである。
+  ['holdHaafingar', 'moot', 'vassal'],
+  ['holdEastmarch', 'moot', 'vassal'],
+  ['holdWhiterun', 'moot', 'vassal'],
+  ['holdReach', 'moot', 'vassal'],
+  ['holdRift', 'moot', 'vassal'],
+  ['holdFalkreath', 'moot', 'vassal'],
+  ['holdPale', 'moot', 'vassal'],
+  ['holdWinterhold', 'moot', 'vassal'],
+  ['holdHjaalmarch', 'moot', 'vassal'],
+
+  // 領どうしの関係。九領のあいだに直接の線は一本しかない。
+  // 帰属の違いは、領どうしではなく、領と両軍のあいだの線として現れる。
+  // 唯一の例外が、内戦の二つの首都である。
+  ['holdHaafingar', 'holdEastmarch', 'hostile'],
+
+  // 内戦の帰属。与しているか、与していないか。
+  ['holdHaafingar', 'legion', 'ally'],
+  ['holdHaafingar', 'stormcloaks', 'hostile'],
+  ['holdReach', 'legion', 'ally'],
+  ['holdRift', 'legion', 'ally'],
+  ['holdFalkreath', 'legion', 'ally'],
+  ['holdEastmarch', 'stormcloaks', 'ally'],
+  ['holdEastmarch', 'legion', 'hostile'],
+  ['holdPale', 'stormcloaks', 'ally'],
+  ['holdWinterhold', 'stormcloaks', 'ally'],
+  ['holdHjaalmarch', 'stormcloaks', 'ally'],
+  ['holdWhiterun', 'legion', 'rival'],
+  ['holdWhiterun', 'stormcloaks', 'rival'],
+
+  // 領の上に載っている組織。領と組織のどちらが上かは、領ごとに違う。
+  ['holdHaafingar', 'eastempire', 'ally'],
+  ['holdHaafingar', 'bards', 'ally'],
+  ['holdHaafingar', 'thalmor', 'rival'],
+  ['holdEastmarch', 'redoran', 'rival'],
+  ['holdWhiterun', 'companions', 'ally'],
+  ['holdWhiterun', 'battleborn', 'ally'],
+  ['holdWhiterun', 'graymane', 'ally'],
+  ['holdReach', 'silverblood', 'vassal'],
+  ['holdReach', 'forsworn', 'hostile'],
+  ['holdRift', 'blackbriar', 'vassal'],
+  ['holdRift', 'thieves', 'rival'],
+  ['holdRift', 'dawnguard', 'ally'],
+  ['holdFalkreath', 'brotherhood', 'rival'],
+  ['holdPale', 'daedriccults', 'rival'],
+  ['holdWinterhold', 'winterhold', 'rival'],
+  ['holdHjaalmarch', 'volkihar', 'hostile'],
+  ['holdHaafingar', 'ninedivines', 'ally'],
 ];
 
 // 指定した組織に接続する辺だけを取り出す。

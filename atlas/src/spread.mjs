@@ -48,9 +48,11 @@ const relHeight = (id) => {
 
 // 小口の帯。分類ごとに天地の位置を変える。
 export function edgeTab(cat, isRecto) {
-  const i = cat.id - 1;                      // 0..6
+  // 帯の天地の位置を分類ごとに変える。色が判別できない条件でも、位置で引ける。
+  // 割る数は分類の数から採る。手で 6 と書くと、分類が増えた日に一段はみ出す。
+  const i = cat.id - 1;
   const h = 26;                              // 帯の丈
-  const top = G.top + ((G.frameH - h) / 6) * i;
+  const top = G.top + ((G.frameH - h) / (categories.length - 1)) * i;
   return `<div class="edge-tab" style="--c:${cat.color};top:${top.toFixed(1)}mm;height:${h}mm;`
     + `${isRecto ? 'right' : 'left'}:0"></div>`;
 }

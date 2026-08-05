@@ -74,6 +74,19 @@ export const ROLE = {
   riekling:        { role: '雪原の民',      where: 'ソルスセイム' },
   bandits:         { role: '街道の略奪者',  where: '廃砦' },
   alduin:          { role: '復活した竜',    where: '各地の墳墓' },
+
+  // ── VIII　領邦・宮廷 ──
+  // 領の肩書は「何の領か」ではなく「何で立っている領か」を書く。
+  // 九つを並べたときに、産と位置の違いが札の上で読めるようにするためである。
+  holdHaafingar:   { role: '港と州都',      where: 'ソリチュード' },
+  holdEastmarch:   { role: '最古の石の市',  where: 'ウィンドヘルム' },
+  holdWhiterun:    { role: '街道の交点',    where: 'ホワイトラン' },
+  holdReach:       { role: '銀と峡谷',      where: 'マルカルス' },
+  holdRift:        { role: '湖と分岐',      where: 'リフテン' },
+  holdFalkreath:   { role: '森と墓地',      where: 'ファルクリース' },
+  holdPale:        { role: '凍らぬ港',      where: 'ドーンスター' },
+  holdWinterhold:  { role: '崩れた市',      where: 'ウィンターホールド' },
+  holdHjaalmarch:  { role: '湿地の杭',      where: 'モーサル' },
 };
 
 // ── 主題別相関図 ─────────────────────────────────
@@ -269,5 +282,54 @@ export const THEMES = [
     note: 'オークの砦は帝国の徴募の対象から外されている。'
       + '外した理由を記した文書は無い。'
       + '砦の側は「砦の掟は帝国の法より古い。だから帝国の法のほうが譲る」と述べる。',
+  },
+  {
+    key: 'holds',
+    n: '九',
+    ja: '九領の帰属',
+    en: 'PRAEFECTVRAE',
+    lead: '九つの領が、内戦においてどちらに立っているかを一枚にした。'
+      + '四領が帝国、四領がストームクローク、一領が中立である。'
+      + 'ただし帰属の言い方には領ごとに幅があり、'
+      + '与すると書いた文書がそのまま与したことを意味するとは限らない。'
+      + '数の上では拮抗しているが、四領の側と四領の側では、'
+      + '兵の数も港の数も産の量も等しくない。'
+      + 'この図が示すのは勢力の均衡ではなく、帰属の分かれ方そのものである。',
+    // 左が帝国の側、右が蜂起の側。
+    // 中央には、ムートと、**帰属の言い方に留保がついた三領**を置いた。
+    // ホワイトランは与せず、ファルクリースは一年以上遅れて表明し、
+    // モーサルは与すると書いた同じ文書の中で自らの選択を疑っている。
+    nodes: [
+      { id: 'legion',          col: 0, row: 0 },
+      { id: 'moot',            col: 1, row: 0 },
+      { id: 'stormcloaks',     col: 2, row: 0 },
+      { id: 'holdHaafingar',   col: 0, row: 2 },
+      { id: 'holdEastmarch',   col: 2, row: 2 },
+      { id: 'holdReach',       col: 0, row: 4 },
+      { id: 'holdPale',        col: 2, row: 4 },
+      { id: 'holdRift',        col: 0, row: 6 },
+      { id: 'holdWinterhold',  col: 2, row: 6 },
+      { id: 'holdWhiterun',    col: 1, row: 3 },
+      { id: 'holdFalkreath',   col: 1, row: 5 },
+      { id: 'holdHjaalmarch',  col: 1, row: 7 },
+    ],
+    note: 'ムートは九領の首長による合議体であり、九領のすべてが席を持つ。'
+      + 'したがって九本の従属の線は、どれか一本でも欠ければムートが成立しないことを示している。'
+      + '中央の三領は、帰属の言い方に留保のついた領である。'
+      + 'ホワイトランはいずれとも反目にとどまり、'
+      + 'ファルクリースは表明が一年以上遅れ、'
+      + 'モーサルは与すると書いた同じ文書の中で自らの選択を疑っている。'
+      + 'ホワイトランの中立は理念の表明ではなく、位置の結果でもある。'
+      + '九領のうちでこの領だけが、両側の街道の交点に立っている。'
+      + 'なお、この一枚は領に関わる線だけを引いている。'
+      + '帝国軍とストームクロークのあいだの線は主題一「内戦」に出る。'
+      + '両方を一枚に載せると、中央の二枚の札が線に埋もれる。',
+    // 領に関わる辺だけに絞る。帝国軍は辺を十七本持つので、
+    // 絞らないと札の背が八十ミリを超え、図が版面から出る。
+    focus: new Set([
+      'holdHaafingar', 'holdEastmarch', 'holdWhiterun', 'holdReach', 'holdRift',
+      'holdFalkreath', 'holdPale', 'holdWinterhold', 'holdHjaalmarch',
+    ]),
+    pitch: 9.8, top: 29,
   },
 ];

@@ -23,6 +23,13 @@ import { plateOf } from './plates.mjs';
 import cal from './calibration.json' with { type: 'json' };
 
 const NUM = (f) => factions.findIndex((x) => x.id === f.id) + 1;
+
+// 漢数字。前付の本文は和文なので、算用数字を混ぜない。
+// 「一二三四五」を添字で引く書き方は、六枚目が出た日に undefined を刷る。
+const KN = '〇一二三四五六七八九';
+export const kanji = (n) => (n < 10 ? KN[n]
+  : n < 20 ? '十' + (n % 10 ? KN[n % 10] : '')
+  : KN[Math.floor(n / 10)] + '十' + (n % 10 ? KN[n % 10] : ''));
 const catOf = (f) => categories.find((c) => c.id === f.cat);
 const emb = (f, o = {}) => emblem(f.emblem, { scale: cal[f.id] ?? 1, extinct: f.extinct, ...o });
 
@@ -48,7 +55,7 @@ const mhead = (t, side) =>
   `<div class="mrh ${side === 'recto' ? 'rh-r' : 'rh-l'}"><span class="mrh-t">${t}</span></div>`;
 
 // ── 1　表紙 ───────────────────────────────────
-// 分類色の七本の帯を表紙にも並べる。小口に現れるものと同じ順・同じ位置。
+// 分類色の帯を表紙にも並べる。小口に現れるものと同じ順・同じ位置。
 // 本を閉じたときの縞が、表紙の縞の続きに見える。
 export const cover = () => sheet('recto', `
   <div class="cv">
@@ -58,7 +65,7 @@ export const cover = () => sheet('recto', `
       <div class="cv-rule"></div>
       <h1 class="cv-title">タムリエル勢力誌</h1>
       <div class="cv-en">A SURVEY OF THE POWERS OF TAMRIEL</div>
-      <div class="cv-sub">スカイリム州所在の四十九組織　図版四百四十一点</div>
+      <div class="cv-sub">スカイリム州所在の五十八組織　九領の宮廷を含む</div>
       <div class="cv-rule"></div>
     </div>
     <div class="cv-foot">
@@ -108,7 +115,7 @@ export const toc = (side, cats, folioOf, folio, sections = {}) => sheet(side, `
 // ── 6-7　序 ──────────────────────────────────
 // 段落は一続きの文として持つ。行ごとに分けて持つと、組んだとき詩に見える。
 const PREFACE_L = [
-  '本書は、第四紀二〇一年前後のスカイリム州に存在した組織を、現存・滅亡を問わず四十九項にわたって記述したものである。'
+  '本書は、第四紀二〇一年前後のスカイリム州に存在した組織を、現存・滅亡を問わず五十八項にわたって記述したものである。'
   + '記述の現在は同年に置き、以後の変動は本書の対象としない。'
   + '対象を一州に限ったのは、州を越える組織を扱わないためではなく、'
   + '州の内側で起きたことだけを一次記録で確かめ得たためである。',
@@ -120,7 +127,7 @@ const PREFACE_L = [
   + '同じ集団が、ある文書では「反徒」、別の文書では「王の軍」と記される。'
   + 'どちらの記録者も嘘は書いていない。本書が最初に行ったのは、この呼称を組織の側から呼び直すことであった。',
 
-  '四十九という数は、州内に存在した組織の総数ではない。'
+  '五十八という数は、州内に存在した組織の総数ではない。'
   + '一次記録が二点以上得られ、かつ目的と成員の双方について記述が可能であったものを採った結果である。'
   + 'この条件を満たさなかった集団は、名の判明しているものだけで百を超える。'
   + 'それらを落としたことは本書の欠落であって、対象が存在しなかったことを意味しない。'
@@ -171,7 +178,7 @@ const PREFACE_R = [
   '第三に、関係を文章で書かない。'
   + '「敵対しているが、利害の一致する場面もある」という一文は、読み手の数だけ異なる図を頭の中に描かせる。'
   + '本書は関係をすべて図式に移した。'
-  + '各項の「関係」欄が本書の実用上の中心であり、前付の相関図二十四枚はその総和である。'
+  + '各項の「関係」欄が本書の実用上の中心であり、前付の相関図はその総和である。'
   + '図式に移せなかった関係——たとえば「かつて協力したが、いまは互いに触れない」といった時間を含む関係——は、'
   + '概要の本文に書き、図には引かなかった。図に引けば、現在そうであるかのように読まれるからである。',
 
@@ -245,11 +252,12 @@ export const legendR = (folio) => sheet('recto', `
           <span class="lgc-c">${byCat(c.id).length} 項</span></div>`).join('')}</div>
       <div class="lg-edge"><span class="lge-t">小口（実寸）</span>
         <div class="lge-b">${categories.map((c, i) =>
-          `<i style="--c:${c.color};top:${(i * (100 - 10.3) / 6).toFixed(2)}%"></i>`).join('')}</div></div>
+          `<i style="--c:${c.color};top:${(i * (100 - 10.3) / (categories.length - 1)).toFixed(2)}%"></i>`).join('')}</div></div>
     </div>
     <p class="lg-note">分類ごとに色を定め、小口・柱・紋章の枠に一貫して用いた。
       帯の天地の位置も分類ごとに変えてあるので、本を閉じた状態で小口を見れば、
-      七本の縞として分類の別が判る。色の見分けがつかない条件でも、位置で引ける。</p></div>
+      ${'一二三四五六七八九'[categories.length - 1]}本の縞として分類の別が判る。
+      色の見分けがつかない条件でも、位置で引ける。</p></div>
 
   <div class="lg-sec"><h3>図版</h3>
     <p class="lg-note">図版はすべて銅版画調の線画とし、分類色を一色だけ重ねた二色刷りとする。
@@ -285,11 +293,12 @@ function relSample(k) {
 
 // ── 分類のあいだの関係数 ─────────────────────────
 // 初版はここに円環の全体相関図を置いていた。第二版で廃した。
-// 四十九点を一枚に収めることはできたが、弦が中央で束になり、
+// 全項を一枚に収めることはできたが、弦が中央で束になり、
 // どの線がどこへ行くのか追えなかった。図として成立していなかったのである。
 // 表のほうは残す。円環では数えないと判らない偏りが、一目で出るからである。
 const CATMX = () => {
-  const m = Array.from({ length: 8 }, () => Array(8).fill(0));
+  const n = categories.length + 1;
+  const m = Array.from({ length: n }, () => Array(n).fill(0));
   for (const [ea, eb] of edges) {
     const a = factions.find((f) => f.id === ea), b = factions.find((f) => f.id === eb);
     if (!a || !b) continue;
@@ -315,9 +324,14 @@ const relStats = () => {
         return `<td class="${r.id === c.id ? 'mx-d' : ''}" ${v ? `style="background:rgba(27,27,26,${(0.06 + 0.5 * v / max).toFixed(3)})"` : ''}>${v || ''}</td>`;
       }).join('')}
       <td class="mx-s">${categories.reduce((n, c) => n + m[r.id][c.id], 0)}</td></tr>`).join('')}</tbody></table>
-  <p class="lg-note">対角は分類の内側の関係である。分類 V「宗教・信仰」の行がほとんど空であることに注意されたい。
+  <p class="lg-note">対角は分類の内側の関係である。
+    分類 V「宗教・信仰」の行が、項の数に対して薄いことに注意されたい。
     公認された教団が他の組織と関係を持たないのではない。関係が記録に残らないのである。
     教団の記録は教団自身が管理しており、外部の文書に現れる機会が少ない。</p>
+  <p class="lg-note">分類 VIII「領邦・宮廷」の行が厚いのは、
+    九領がこの州の他のすべての組織の載っている場だからである。
+    対角が一しかないのは、領どうしの直接の線が内戦の二つの首都のあいだの一本しかないためで、
+    帰属の違いは領どうしではなく、領と両軍のあいだの線として現れる。</p>
 
   <h3>敵対の集まる組織</h3>
   <ol class="md-top">${top.map(([f, n]) =>
@@ -330,8 +344,8 @@ const relStats = () => {
 // ── 相関図の扉（二頁） ───────────────────────────
 export const relIntroL = (folio) => sheet('verso', `
   <h2 class="mh">相関図</h2>
-  <p class="lg-lead">四十九の組織のあいだに、${edges.length}件の関係が確認されている。
-    これを二十四枚に分けて図にした。本編に入る前にここを通っていただきたい。
+  <p class="lg-lead">${factions.length}の組織のあいだに、${edges.length}件の関係が確認されている。
+    これを${kanji(REL_SHEETS)}枚に分けて図にした。本編に入る前にここを通っていただきたい。
     <b>本編各項の四頁目にも同じ関係が行として載る。同じことを二度、別の形で読める。</b></p>
 
   <h3>札の読み方</h3>
@@ -354,33 +368,33 @@ export const relIntroL = (folio) => sheet('verso', `
   { head: mhead('相関図', 'verso'), folio });
 
 export const relIntroR = (folio) => sheet('recto', `
-  <h3>二十四枚の並び</h3>
+  <h3>${kanji(REL_SHEETS)}枚の並び</h3>
   <div class="g rk-idx">
-    <div class="c3"><h4>主題別　八枚</h4><ul>${THEMES.map((t) =>
+    <div class="c3"><h4>主題別　${kanji(THEMES.length)}枚</h4><ul>${THEMES.map((t) =>
       `<li><span class="rk-n">${t.n}</span>${t.ja}</li>`).join('')}</ul></div>
-    <div class="c3"><h4>分類別　十六枚</h4><ul>${categories.map((c) => {
+    <div class="c3"><h4>分類別　${kanji(REL_SHEETS - THEMES.length)}枚</h4><ul>${categories.map((c) => {
       const n = categorySheets(c).length;
       return `<li><span class="rk-n" style="--c:${c.color}">${c.n}</span>${c.ja}`
-        + (n > 1 ? `<b>${'一二三四五'[n - 1]}枚</b>` : '') + `</li>`;
+        + (n > 1 ? `<b>${kanji(n)}枚</b>` : '') + `</li>`;
     }).join('')}</ul></div>
   </div>
   <p class="lg-note">分類は「その組織が何であるか」の区分であって、
     「何が起きているか」の区分ではない。内戦を追う読者は分類 II の頁だけでは足りない。
-    名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。
+    名家も教団も隊商も内戦の中にいる。主題別の${kanji(THEMES.length)}枚は、そのために立てた。
     分類別のほうを相手ではなく成員で割ったのは、
     どの組織にも「自分の関係が全部見える一枚」を持たせるためである。</p>
 ${relStats()}`,
   { head: mhead('相関図', 'recto'), folio });
 
 // ── 相関図の頁 ───────────────────────────────────
-// 二十四枚を前付にまとめる。各項の四頁目から、この節へ案内している。
+// 全枚数を前付にまとめる。各項の四頁目から、この節へ案内している。
 export const relSheet = (theme, side, folio) => sheet(side, `
   <div class="rs">${themeSheet(theme)}</div>`,
   { head: mhead('相関図', side), folio });
 
 // ── 相関図の索引 ─────────────────────────────────
-// 二十四枚に割った代償である。「この組織はどの図に出るのか」を、
-// 図のほうから引けるようにしておかないと、読者は二十四枚を繰ることになる。
+// 図を複数枚に割った代償である。「この組織はどの図に出るのか」を、
+// 図のほうから引けるようにしておかないと、読者は全枚数を繰ることになる。
 // ●は、その組織の関係が一枚に全部載っている図——すなわちその組織が中央に立つ図——を指す。
 export const relIndex = (side, sheets, sheetFolio, folio) => {
   const rows = factions.map((f) => {
@@ -394,10 +408,12 @@ export const relIndex = (side, sheets, sheetFolio, folio) => {
     on.sort((a, b) => (b.main ? 1 : 0) - (a.main ? 1 : 0) || a.page - b.page);
     return { f, n: edgesOf(f.id).length, on };
   });
-  const half = side === 'verso' ? rows.slice(0, 25) : rows.slice(25);
+  // 左頁には見出しと前書きが載る。半分ずつに割ると左だけが溢れる。
+  const cut = Math.ceil(rows.length / 2) - 3;
+  const half = side === 'verso' ? rows.slice(0, cut) : rows.slice(cut);
   return sheet(side, `
   ${side === 'verso' ? `<h2 class="mh">相関図索引</h2>
-    <div class="lg-lead">四十九項が、二十四枚のどこに出るかを示す。
+    <div class="lg-lead">${kanji(factions.length)}項が、${kanji(sheets.length)}枚のどこに出るかを示す。
       <b>●</b>を付した一枚には、その組織の関係が漏れなく載っている。
       印のない図には、その図の主題に関わる分だけが出る。</div>` : ''}
   <div class="ri">${half.map(({ f, n, on }) => `
@@ -475,7 +491,7 @@ export const distL = (dm, folio) => sheet('verso', `
     番号入りの点として打った。分類色は右頁の凡例による。</div>
   <div class="dm">${dm.svg}</div>
   <p class="lg-note">点の位置は拠点であって勢力の及ぶ範囲ではない。
-    範囲を面で示す図は本書では作らなかった。四十九項の活動域はほとんどが重なり合っており、
+    範囲を面で示す図は本書では作らなかった。各項の活動域はほとんどが重なり合っており、
     七枚の網を重ねれば版面が潰れて何も読めなくなる。分布図の役目は「どこに何があるか」であり、
     面の広がりを示すことではない。</p>`,
   { head: mhead('勢力分布図', 'verso'), folio });
@@ -509,6 +525,8 @@ export const distR = (dm, folioOf, folio) => {
 // 同じ年に出来事が七つある第四紀二〇一年で、同じ番号が七度刷られる。
 // 年を一度だけ立て、その年の出来事を並べ、番号は年に一度だけ添える。
 const HIST = historyRefs(records2);
+// 相関図の枚数。主題別＋分類別。手で書いた数字は、分類が増えた日に古くなる。
+const REL_SHEETS = THEMES.length + categories.reduce((n, c) => n + categorySheets(c).length, 0);
 const chronYears = (era) => {
   const list = events.filter((e) => e.era === era);
   const keys = [...new Set(list.map((e) => e.year))];
@@ -521,8 +539,8 @@ const chronYears = (era) => {
 };
 
 // 番号の並び。ただし、ほとんどの項が並ぶ年では裏返す。
-// 第四紀二〇一年は本書の記述の現在なので、四十九項のほとんどが何かを持つ。
-// 一から四十九まで刷っても索引にならない。持たない側を出したほうが情報になる。
+// 第四紀二〇一年は本書の記述の現在なので、ほとんどの項が何かを持つ。
+// 全項の番号を刷っても索引にならない。持たない側を出したほうが情報になる。
 const chronRefs = (ids) => {
   const num = (id) => {
     const f = factions.find((x) => x.id === id);
@@ -668,7 +686,9 @@ const CAT_NOTE = {
 
 // ── 後付　門戸・排他関係一覧表 ────────────────────
 export const doorTable = (side, folioOf, folio) => {
-  const half = side === 'verso' ? factions.slice(0, 25) : factions.slice(25);
+  // 同じ理由で、門戸一覧も左頁を軽くする。
+  const cut = Math.ceil(factions.length / 2) - 4;
+  const half = side === 'verso' ? factions.slice(0, cut) : factions.slice(cut);
   return sheet(side, `
   ${side === 'verso' ? `<h2 class="mh">門戸・排他関係一覧</h2>
     <div class="lg-lead">各項の「門戸」と、排他——すなわち同時に属し得ない組織——を一覧にした。
@@ -903,7 +923,7 @@ h3 { font-size:3.6mm; font-weight:600; letter-spacing:.06em; margin:calc(var(--l
 /* 相関図索引。組織 → 図。行は一頁二十五本に収める。 */
 .ri-r { display:flex; align-items:baseline; gap:1.8mm; font-size:2.9mm;
         line-height:calc(var(--lead)*0.86); border-bottom:.15mm solid var(--rule);
-        padding:1.5mm 0; }
+        padding:.85mm 0; }
 /* 名と関係数は縮めない。図の一覧のほうを折り返す。
    帝国軍は十三本持つので、一行では収まらない。 */
 .ri-f { font-weight:600; flex:none; white-space:nowrap; }
@@ -1036,7 +1056,7 @@ table.mx td.mx-d { outline:.35mm solid var(--ink); outline-offset:-.35mm; }
 /* 地図 */
 .mp svg { width:var(--frame-w); height:auto; display:block; }
 /* 図二は下に領の表を敷くので、図のほうを一割ほど詰める。 */
-.mp-s svg { width:90%; margin:0 auto; }
+.mp-s svg { width:78%; margin:0 auto; }
 
 /* 図の下の表。図一は州外十三項、図二は九つの領。 */
 .mfo { margin-top:1mm; }
@@ -1133,26 +1153,27 @@ a.xn { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.5mm; color:v
 table.dt { width:100%; border-collapse:collapse; }
 table.dt th { font-size:2.5mm; letter-spacing:.12em; color:var(--ink-weak); text-align:left;
               border-bottom:.4mm solid var(--ink); padding-bottom:1mm; font-weight:400; }
-table.dt td { font-size:2.85mm; padding:1.05mm 0; border-bottom:.15mm solid var(--rule); }
+table.dt td { font-size:2.7mm; padding:.72mm 0; border-bottom:.15mm solid var(--rule); }
 .dt-n { width:8mm; font-family:'EB Garamond','Noto Serif JP',serif; color:var(--c); }
 .dt-f { width:44mm; }
 .dt-x { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.6mm; color:var(--ink-mid); }
 
 /* 索引 */
-.pi, .gi { columns:2; column-gap:var(--gutter); }
-.pi-r, .gi-r { display:flex; align-items:baseline; font-size:2.8mm;
-               line-height:calc(var(--lead)*0.82); break-inside:avoid; }
+/* 五十八項ぶんになったので二段では入らない。三段に割る。 */
+.pi, .gi { columns:3; column-gap:calc(var(--gutter)*0.9); }
+.pi-r, .gi-r { display:flex; align-items:baseline; font-size:2.5mm;
+               line-height:calc(var(--lead)*0.74); break-inside:avoid; }
 .pi-g { break-inside:avoid; }
 .pi-h { font-size:2.4mm; letter-spacing:.2em; color:var(--ink-weak);
         border-bottom:.2mm solid var(--rule); padding-bottom:.5mm;
         margin:1.6mm 0 .8mm; }
 .pi-g:first-child .pi-h { margin-top:0; }
 .pi-n { font-weight:600; flex:none; }
-.pi-w { margin-left:1.8mm; font-size:2.4mm; color:var(--ink-mid);
+.pi-w { margin-left:1.4mm; font-size:2.15mm; color:var(--ink-mid);
         min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.pi-o { margin-left:2mm; color:var(--ink-mid); font-size:2.5mm;
+.pi-o { margin-left:1.6mm; color:var(--ink-mid); font-size:2.2mm;
         flex:none; white-space:nowrap; }
-.gi-see { color:var(--ink-mid); font-size:2.5mm; margin-left:1.4mm; }
+.gi-see { color:var(--ink-mid); font-size:2.2mm; margin-left:1.2mm; }
 
 /* 追記欄 */
 .np { margin-top:calc(var(--lead)*0.5); }

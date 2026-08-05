@@ -454,6 +454,12 @@ function groupMembers(cat) {
   return groups;
 }
 
+// 漢数字。'一二三四五' を添字で引く書き方は、六枚目が出た日に undefined を刷る。
+const KN = '〇一二三四五六七八九';
+const kanji = (n) => (n < 10 ? KN[n]
+  : n < 20 ? '十' + (n % 10 ? KN[n % 10] : '')
+  : KN[Math.floor(n / 10)] + '十' + (n % 10 ? KN[n % 10] : ''));
+
 export function categoryTheme(cat, group, part = 0, parts = 1, only = null) {
   const mineAll = new Set(factions.filter((f) => f.cat === cat.id).map((f) => f.id));
   const mine = group;
@@ -487,12 +493,12 @@ export function categoryTheme(cat, group, part = 0, parts = 1, only = null) {
   return {
     key: 'cat' + cat.id + (parts > 1 ? '-' + (part + 1) : ''),
     kind: '分類', n: cat.n,
-    ja: cat.ja + (parts > 1 ? `（${'一二三四五'[part]}）` : ''),
+    ja: cat.ja + (parts > 1 ? `（${kanji(part + 1)}）` : ''),
     en: cat.en, focus: new Set(mine),
     lead: cat.note + `本書はこの分類に ${total} 項を収めた。`
       + (parts > 1
-        ? `札の高さが関係の数で決まるため、${'一二三四五'[parts - 1]} 枚に割った。`
-          + `これはその ${'一二三四五'[part]} 枚目で、`
+        ? `札の高さが関係の数で決まるため、${kanji(parts)} 枚に割った。`
+          + `これはその ${kanji(part + 1)} 枚目で、`
           + `${mine.map((id) => byId[id].ja).join('・')} の ${mine.length} 項を中央に置く。`
         : '中央がこの分類の組織、左右がその相手である。')
       + `左右の ${others.length} 組織が、その相手である。`,

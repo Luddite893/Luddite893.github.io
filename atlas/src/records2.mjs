@@ -30,7 +30,7 @@
 // 年表と同じ数字なので、年表からも本編からも同じ事件へ行ける。
 //
 // ── ファイルの分割 ────────────────────────────────
-// 本文は四十九項で八万字に達するので、分類ごとのファイルに分けてある。
+// 本文は五十八項で八万字を超えるので、分類ごとのファイルに分けてある。
 // ここは束ねるだけの層で、外から見た形（records2 / lengths / SPEC）は変えない。
 
 import { cat1 } from './records2/cat1.mjs';
@@ -40,6 +40,7 @@ import { cat4 } from './records2/cat4.mjs';
 import { cat5 } from './records2/cat5.mjs';
 import { cat6 } from './records2/cat6.mjs';
 import { cat7 } from './records2/cat7.mjs';
+import { cat8 } from './records2/cat8.mjs';
 
 export const records2 = {
   ...cat1,
@@ -49,6 +50,7 @@ export const records2 = {
   ...cat5,
   ...cat6,
   ...cat7,
+  ...cat8,
 };
 
 // 文字数の検査。仕様の枠に収まっているかを機械で見る。

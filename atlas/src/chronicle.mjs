@@ -54,6 +54,7 @@ export const events = [
   { era: 'e4', year: '175', text: '白金協定。タロス信仰の禁圧とブレイズの解散が定められる。', refs: ['thalmor', 'blades', 'ninedivines', 'legion'] },
   { era: 'e4', year: '176', text: 'ステンダールの守人、結成。動乱の再発を防ぐことを目的に掲げる。', refs: ['vigilants'] },
   { era: 'e4', year: '176', text: '盗賊ギルドの退潮が始まる。当代の成員はこれを「運が離れた」と説明する。', refs: ['thieves', 'nightingale'] },
+  { era: 'e4', year: '177', text: 'ファルクリース領が帝国に与する立場を表明。九領の帰属がひととおり定まる。', refs: ['holdFalkreath'] },
   { era: 'e4', year: '180', text: 'ハンマーフェルが帝国から離脱する。州内に現れる傭兵の背景がここにある。', refs: ['alikr'] },
   { era: 'e4', year: '181', text: 'ブラック・ブライア家、リフテンの醸造権を握る。以後、領の実務に食い込む。', refs: ['blackbriar'] },
   { era: 'e4', year: '188', text: 'マルカルスの事変。リーチの蜂起と鎮圧。フォースウォーンの現在の形が定まる。', refs: ['forsworn', 'silverblood'] },

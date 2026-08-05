@@ -182,6 +182,38 @@ export const plates = {
   alduin: { structure: 'barrow', night: 1, figures: 0,
     caption: '墳墓の上空。復活は一定の順序で進行しており、順序を決めている者がいる。',
     cuts: ['skull', 'fang', 'claw'], cutCaps: ['竜の頭骨', '牙', '爪'] },
+
+  // ── VIII 領邦・宮廷 ──
+  // 領の主図版は市そのものである。他の分類では「その組織が何をしている場所か」を選ぶが、
+  // 領においては、市の形がそのまま統治の形だからである。
+  // 峡谷を刳り抜いた市と、湿地に杭を打った市とでは、そこで行い得る統治が違う。
+  holdHaafingar: { structure: 'city',
+    caption: '岩橋の上に載るソリチュード。橋の下を船が通る。港は年を通して凍らない。',
+    cuts: ['banner', 'anchor', 'seal'], cutCaps: ['領の旗', '港の錨', '総督府の印'] },
+  holdEastmarch: { structure: 'keep',
+    caption: '王の宮。市壁の下層は、人の手になる石積みとしては州内で最も古い。',
+    cuts: ['crown', 'banner', 'brazier'], cutCaps: ['王冠（座のみ）', '領の旗', '大広間の火'] },
+  holdWhiterun: { structure: 'city',
+    caption: '平原に立つ丘と、その頂の大広間。九領のいずれとも境を接する。',
+    cuts: ['gate', 'banner', 'shield'], cutCaps: ['市門', '領の旗', '衛兵の盾'] },
+  holdReach: { structure: 'city',
+    caption: '峡谷の岩壁を刳り抜いた市。階段と水路の大半は、人の手になるものではない。',
+    cuts: ['tongs', 'pickaxe', 'ingot'], cutCaps: ['遺構の鉗子', '坑の鶴嘴', '銀の延べ'] },
+  holdRift: { structure: 'dock',
+    caption: '湖岸に杭を打って建てた市。水路が市街を貫き、その下にもう一つの道がある。',
+    cuts: ['barrel', 'ledger', 'lantern'], cutCaps: ['蜂蜜酒の樽', '市場の帳', '水路の灯'] },
+  holdFalkreath: { structure: 'forest',
+    caption: '針葉樹の森に開かれた墓地。区画は現在も継ぎ足されている。',
+    cuts: ['cairn', 'sickle', 'candle'], cutCaps: ['墓標', '下草を刈る鎌', '通夜の灯'] },
+  holdPale: { structure: 'dock', night: 1,
+    caption: '凍らぬ港。陸路は冬季に三月ほど絶えるが、海は開いている。',
+    cuts: ['anchor', 'pickaxe', 'net'], cutCaps: ['港の錨', '坑の鶴嘴', '漁の網'] },
+  holdWinterhold: { structure: 'ruin', figures: 0,
+    caption: '崩壊のあと。残ったのは数戸の家と、橋の先だけである。',
+    cuts: ['runestone', 'chain', 'hourglass'], cutCaps: ['崩壊以前の碑', '橋の鎖', '三百年'] },
+  holdHjaalmarch: { structure: 'hut',
+    caption: '湿地に打った杭の上の集落。杭は数年ごとに打ち替えねばならない。',
+    cuts: ['fungus', 'oar', 'herb'], cutCaps: ['湿地の茸', '泥炭を運ぶ櫂', '薬草'] },
 };
 
 const ORDER = new Map(factions.map((f, i) => [f.id, i + 1]));
