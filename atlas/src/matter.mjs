@@ -16,7 +16,7 @@ import { catDiagram } from './diagram.mjs';
 import { card as relCard, categorySheets, themeSheet } from './relmap.mjs';
 import { THEMES } from './relmap-data.mjs';
 import { edges, edgesOf, KINDS, hostileDegree } from './relations.mjs';
-import { tamrielMap, skyrimMap, distributionMap, PROVINCES } from './map.mjs';
+import { tamrielMap, skyrimMap, distributionMap, PROVINCES, FOREIGN, HOLDS, SEATS } from './map.mjs';
 import { eras, events, refNums } from './chronicle.mjs';
 import { plateOf } from './plates.mjs';
 import cal from './calibration.json' with { type: 'json' };
@@ -160,7 +160,7 @@ const PREFACE_R = [
   '第三に、関係を文章で書かない。'
   + '「敵対しているが、利害の一致する場面もある」という一文は、読み手の数だけ異なる図を頭の中に描かせる。'
   + '本書は関係をすべて図式に移した。'
-  + '各項の「関係」欄が本書の実用上の中心であり、巻頭の全体相関図はその総和である。'
+  + '各項の「関係」欄が本書の実用上の中心であり、前付の相関図二十四枚はその総和である。'
   + '図式に移せなかった関係——たとえば「かつて協力したが、いまは互いに触れない」といった時間を含む関係——は、'
   + '概要の本文に書き、図には引かなかった。図に引けば、現在そうであるかのように読まれるからである。',
 
@@ -272,12 +272,11 @@ function relSample(k) {
   }
 }
 
-// ── 10-11　全体相関図 ────────────────────────────
-// 円環図を見開きに跨がせる案は捨てた。
-// 弦の交わる中心がノドに落ちる。綴じで一〇ミリ持っていかれる位置に、
-// この図のいちばん読ませたい部分が来てしまう。
-// そこで図は右頁に一枚で置き、左頁を「読むための装置」に充てた。
-// 分類間の関係数を表にすると、円環図では数えないと判らない偏りが一目で出る。
+// ── 分類のあいだの関係数 ─────────────────────────
+// 初版はここに円環の全体相関図を置いていた。第二版で廃した。
+// 四十九点を一枚に収めることはできたが、弦が中央で束になり、
+// どの線がどこへ行くのか追えなかった。図として成立していなかったのである。
+// 表のほうは残す。円環では数えないと判らない偏りが、一目で出るからである。
 const CATMX = () => {
   const m = Array.from({ length: 8 }, () => Array(8).fill(0));
   for (const [ea, eb] of edges) {
@@ -288,17 +287,13 @@ const CATMX = () => {
   return m;
 };
 
-export const masterL = (folio) => {
+// 関係の統計。相関図の扉の右頁に置く。
+const relStats = () => {
   const m = CATMX();
   const top = [...factions].map((f) => [f, hostileDegree(f.id)])
-    .sort((a, b) => b[1] - a[1]).slice(0, 10);
+    .sort((a, b) => b[1] - a[1]).slice(0, 8);
   const max = Math.max(...categories.flatMap((r) => categories.map((c) => m[r.id][c.id])));
-  return sheet('verso', `
-  <h2 class="mh">全体相関図</h2>
-  <div class="md-lead">四十九項のすべてと、その間に確認された${edges.length}件の関係を右頁に一枚で収めた。
-    外周は分類ごとに区切ってある。敵対のみを弦として内側に引き、それ以外の関係は外周の弧で示した。
-    弦の集まる位置が、この州における対立の焦点である。</div>
-
+  return `
   <h3>分類のあいだの関係数</h3>
   <table class="mx"><thead><tr><th></th>${categories.map((c) =>
     `<th style="--c:${c.color}">${c.n}</th>`).join('')}<th class="mx-s">計</th></tr></thead>
@@ -310,64 +305,23 @@ export const masterL = (folio) => {
       }).join('')}
       <td class="mx-s">${categories.reduce((n, c) => n + m[r.id][c.id], 0)}</td></tr>`).join('')}</tbody></table>
   <p class="lg-note">対角は分類の内側の関係である。分類 V「宗教・信仰」の行がほとんど空であることに注意されたい。
-    公認された教団は、他の組織と関係を持たないのではない。関係が記録に残らないのである。
+    公認された教団が他の組織と関係を持たないのではない。関係が記録に残らないのである。
     教団の記録は教団自身が管理しており、外部の文書に現れる機会が少ない。</p>
 
   <h3>敵対の集まる組織</h3>
   <ol class="md-top">${top.map(([f, n]) =>
     `<li><a class="xl" data-to="${f.id}"><span class="mdn" style="--c:${catOf(f).color}">${NUM(f)}</span>${f.ja}</a><b>${n}</b></li>`).join('')}</ol>
-  <p class="lg-note">数字は敵対関係の本数である。上位十項のうち六項が、分類 II「国家・軍事」
+  <p class="lg-note">数字は敵対関係の本数である。上位のほとんどが分類 II「国家・軍事」
     または分類 III「敵対組織」に属する。州内の対立が、信仰や商いではなく
-    統治の帰属をめぐって生じていることを示す。</p>`,
-  { head: mhead('関係の統計', 'verso'), folio });
+    統治の帰属をめぐって生じていることを示す。</p>`;
 };
-
-// 円環の全体相関図は第二版で廃した。四十九点を一枚に収めたが、
-// 弦が中央で束になり、どの線がどこへ行くのか追えなかったためである。
-// 代わりに、相関図の読み方と十九枚の内訳をここに置く。
-export const masterR = (folio) => sheet('recto', `
-  <h3>相関図の読み方</h3>
-  <div class="rk-card"><svg viewBox="0 0 47 30" xmlns="http://www.w3.org/2000/svg"
-    font-family="Noto Serif JP, serif">${relCard('legion', 1, 0.5, {
-    rows: [{ kind: 'hostile', other: 'stormcloaks', side: 1 },
-           { kind: 'vassal', other: 'thalmor', side: 1 },
-           { kind: 'ally', other: 'eastempire', side: -1 }] })}</svg></div>
-  <ol class="rk-list">
-    <li><b>札</b>　紋章・組織名・肩書・所在の四つを札の頭に入れた。
-      札を見れば、その組織が何者かが分かる。凡例へ戻る必要はない。</li>
-    <li><b>関係の行</b>　札の下半分に、その組織が持つ関係を一行ずつ並べた。
-      <b>語と相手の名がその場にある</b>ので、線を辿らずとも関係が読める。</li>
-    <li><b>線</b>　行の縁から出て、相手の行の縁へ入る。直交でのみ引く。
-      <b>線の上には文字を一つも置かない。</b>
-      束になった線の脇に語を並べると、どの語がどの線のものか分からなくなるためである。</li>
-    <li><b>矢</b>　従属は上位を、派生は母体を指す。この二つだけが向きを持つ。</li>
-  </ol>
-  <p class="lg-note">初版では、線の中ほどに語の小札を置いていた。
-    一枚の札から線が n 本出るとき語も n 個要るが、札の縁は十三ミリしかない。
-    語は四ミリ強あるので、三本を超えたところで必ず重なる。
-    第二版では語を線から降ろし、札の中の行に移した。</p>
-
-  <h3>十九枚の内訳</h3>
-  <div class="g rk-idx">
-    <div class="c3"><h4>主題別　八枚</h4><ul>${THEMES.map((t) =>
-      `<li><span class="rk-n">${t.n}</span>${t.ja}</li>`).join('')}</ul></div>
-    <div class="c3"><h4>分類別　十一枚</h4><ul>${categories.map((c) => {
-      const n = categorySheets(c).length;
-      return `<li><span class="rk-n" style="--c:${c.color}">${c.n}</span>${c.ja}`
-        + (n > 1 ? `<b>${'一二三四'[n - 1]}枚</b>` : '') + `</li>`;
-    }).join('')}</ul></div>
-  </div>
-  <p class="lg-note">分類は「その組織が何であるか」の区分であって、
-    「何が起きているか」の区分ではない。内戦を追う読者は分類 II の頁だけでは足りない。
-    名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。</p>`,
-  { head: mhead('相関図について', 'recto'), folio });
 
 // ── 相関図の扉（二頁） ───────────────────────────
 export const relIntroL = (folio) => sheet('verso', `
   <h2 class="mh">相関図</h2>
-  <p class="lg-lead">本編の各項は、その組織の関係を行として持っている。
-    ここに集めた二十四枚は、それを図として組み直したものである。
-    <b>同じ関係を、二度、別の形で読めるようにしてある。</b></p>
+  <p class="lg-lead">四十九の組織のあいだに、${edges.length}件の関係が確認されている。
+    これを二十四枚に分けて図にした。本編に入る前にここを通っていただきたい。
+    <b>本編各項の四頁目にも同じ関係が行として載る。同じことを二度、別の形で読める。</b></p>
 
   <h3>札の読み方</h3>
   <div class="rk-card"><svg viewBox="0 0 47 30" xmlns="http://www.w3.org/2000/svg"
@@ -401,37 +355,107 @@ export const relIntroR = (folio) => sheet('recto', `
   </div>
   <p class="lg-note">分類は「その組織が何であるか」の区分であって、
     「何が起きているか」の区分ではない。内戦を追う読者は分類 II の頁だけでは足りない。
-    名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。</p>
-
-  <h3>分類別の図の割り方</h3>
-  <p class="lg-lead">札の高さは関係の数で決まる。辺を十三本持つ帝国軍の札は七十ミリになり、
-    分類 II の六項を一枚に並べると中央の列だけで版面を超える。
-    そこで<b>相手ではなく成員のほうで割った</b>。
-    どの組織も「自分の関係が全部見える一枚」を必ず持っている。</p>
-  <p class="lg-note">左右に置いた組織の関係は、その組織の属する分類の図に出る。
-    一枚に相手の関係まで引くと、中央の組織が線に埋もれるためである。</p>`,
+    名家も教団も隊商も内戦の中にいる。主題別の八枚は、そのために立てた。
+    分類別のほうを相手ではなく成員で割ったのは、
+    どの組織にも「自分の関係が全部見える一枚」を持たせるためである。</p>
+${relStats()}`,
   { head: mhead('相関図', 'recto'), folio });
 
 // ── 相関図の頁 ───────────────────────────────────
-// 二十四枚を巻末にまとめる。各項の四頁目から、この節へ案内している。
+// 二十四枚を前付にまとめる。各項の四頁目から、この節へ案内している。
 export const relSheet = (theme, side, folio) => sheet(side, `
   <div class="rs">${themeSheet(theme)}</div>`,
   { head: mhead('相関図', side), folio });
 
-// ── 12-13　地図（全図・九領図） ──────────────────
-export const mapTamriel = (folio) => sheet('verso', `
+// ── 相関図の索引 ─────────────────────────────────
+// 二十四枚に割った代償である。「この組織はどの図に出るのか」を、
+// 図のほうから引けるようにしておかないと、読者は二十四枚を繰ることになる。
+// ●は、その組織の関係が一枚に全部載っている図——すなわちその組織が中央に立つ図——を指す。
+export const relIndex = (side, sheets, sheetFolio, folio) => {
+  const rows = factions.map((f) => {
+    const on = [];
+    sheets.forEach((t, i) => {
+      const node = t.nodes.find((n) => n.id === f.id);
+      if (!node) return;
+      on.push({ i, main: node.col === 1 && (!t.focus || t.focus.has(f.id)),
+                label: `${t.kind ?? '主題'}${t.n}`, page: sheetFolio(i) });
+    });
+    on.sort((a, b) => (b.main ? 1 : 0) - (a.main ? 1 : 0) || a.page - b.page);
+    return { f, n: edgesOf(f.id).length, on };
+  });
+  const half = side === 'verso' ? rows.slice(0, 25) : rows.slice(25);
+  return sheet(side, `
+  ${side === 'verso' ? `<h2 class="mh">相関図索引</h2>
+    <div class="lg-lead">四十九項が、二十四枚のどこに出るかを示す。
+      <b>●</b>を付した一枚には、その組織の関係が漏れなく載っている。
+      印のない図には、その図の主題に関わる分だけが出る。</div>` : ''}
+  <div class="ri">${half.map(({ f, n, on }) => `
+    <div class="ri-r">
+      <span class="mdn" style="--c:${catOf(f).color}">${NUM(f)}</span>
+      <a class="xl ri-f" data-to="${f.id}">${f.ja}</a>
+      <span class="ri-c">関係 ${n}</span>
+      <span class="ri-s">${on.map((o) =>
+        `<i${o.main ? ' class="ri-m"' : ''}>${o.main ? '●' : ''}${o.label}<b>${o.page}</b></i>`).join('')}</span>
+    </div>`).join('')}</div>`,
+    { head: mhead('相関図索引', side), folio });
+};
+
+// ── 地図（全図・九領図） ────────────────────────
+// 図は版面の幅いっぱいでも高さの六割しか使わない。横に長い図を縦長の頁に置けば、
+// 下に必ず余りが出る。そこを白いままにせず、図から引くべき表を入れた。
+export const mapTamriel = (folio, folioOf) => sheet('verso', `
   <h2 class="mh">図一　タムリエル全図</h2>
   <div class="mp">${tamrielMap({ size: 1180 })}</div>
   <p class="lg-note">本書が扱うのは州一つだが、州外に本拠を置く組織が十三項ある。
-    それらの「遠さ」は、州内の地図では表せない。州境は模式であり、測量に基づかない。</p>`,
+    それらの「遠さ」は、州内の地図では表せない。州境は模式であり、測量に基づかない。</p>
+
+  <h3>州外に本拠を置く十三項</h3>
+  <div class="g mfo">${Object.entries(FOREIGN).map(([pid, names]) => {
+    const p = PROVINCES.find((x) => x.id === pid);
+    return `<div class="c2 mfo-c"><h4>${p.ja}</h4><ul>${names.map((n) => {
+      const f = factions.find((x) => x.ja === n);
+      return `<li><a class="xl" data-to="${f.id}"><span class="tn" style="--c:${catOf(f).color}">${NUM(f)}</span>${n}
+        <span class="dots"></span><span class="tp2">${folioOf(f.id)}</span></a></li>`;
+    }).join('')}</ul></div>`;
+  }).join('')}</div>
+  <p class="lg-note">これらの項の「拠点」欄には州外の地名が入る。
+    各項の小地図はスカイリムの輪郭で描いているので、印が図の縁に寄るか、図に出ない。
+    州外にある拠点は、この頁の図で引かれたい。</p>`,
   { head: mhead('地図', 'verso'), folio });
 
-export const mapSkyrim = (folio) => sheet('recto', `
+export const mapSkyrim = (folio, folioOf) => {
+  // 領ごとに、その領の中に拠点を持つ項を集める。
+  const at = new Map(HOLDS.map((h) => [h.id, []]));
+  const hold = (seat) => {
+    const p = SEATS[seat];
+    if (!p) return null;
+    // いちばん近い領の名を採る。領境は模式なので、これで足りる。
+    return HOLDS.reduce((best, h) =>
+      Math.hypot(h.x - p[0], h.y - p[1]) < Math.hypot(best.x - p[0], best.y - p[1]) ? h : best).id;
+  };
+  for (const f of factions) {
+    const h = hold(records[f.id].seat);
+    if (h && SEATS[records[f.id].seat]) at.get(h).push(f);
+  }
+  return sheet('recto', `
   <h2 class="mh">図二　スカイリム九領図</h2>
-  <div class="mp">${skyrimMap({ size: 1180 })}</div>
+  <div class="mp mp-s">${skyrimMap({ size: 1180 })}</div>
   <p class="lg-note">領境と街道、および本書の各項が拠点として挙げる地を打った。
-    街道は破線で示す。冬季に通行が絶える区間の別は、本図では示していない。</p>`,
+    街道は破線で示す。冬季に通行が絶える区間の別は、本図では示していない。
+    札が地点から離れた箇所は、細い線で結んである。</p>
+
+  <h3>九つの領と領都</h3>
+  <table class="hd"><thead><tr><th>領</th><th>領都</th><th>本書所収の項</th></tr></thead>
+    <tbody>${HOLDS.map((h) => `<tr>
+      <td class="hd-h">${h.ja}</td><td class="hd-s">${h.seat}</td>
+      <td class="hd-f">${at.get(h.id).length
+        ? at.get(h.id).map((f) =>
+          `<a class="xl" data-to="${f.id}"><span class="tn" style="--c:${catOf(f).color}">${NUM(f)}</span>${f.ja}</a>`).join('')
+        : '—'}</td></tr>`).join('')}</tbody></table>
+  <p class="lg-note">領は模式の境で割ってあるので、拠点の帰属はいちばん近い領で採った。
+    州外に拠点を持つ十三項は、この表に現れない。前頁の図一で引かれたい。</p>`,
   { head: mhead('地図', 'recto'), folio });
+};
 
 // ── 14-15　勢力分布図（見開き） ──────────────────
 export const distL = (dm, folio) => sheet('verso', `
@@ -681,6 +705,22 @@ h3 { font-size:3.6mm; font-weight:600; letter-spacing:.06em; margin:calc(var(--l
 .rk-idx b { margin-left:auto; font-size:2.3mm; color:var(--ink-weak); font-weight:400; }
 .rk-n { display:inline-block; width:5mm; color:var(--c,#8b8880); font-size:2.4mm;
         letter-spacing:.06em; }
+
+/* 相関図索引。組織 → 図。行は一頁二十五本に収める。 */
+.ri-r { display:flex; align-items:baseline; gap:1.8mm; font-size:2.9mm;
+        line-height:calc(var(--lead)*0.86); border-bottom:.15mm solid var(--rule);
+        padding:1.5mm 0; }
+/* 名と関係数は縮めない。図の一覧のほうを折り返す。
+   帝国軍は十三本持つので、一行では収まらない。 */
+.ri-f { font-weight:600; flex:none; white-space:nowrap; }
+.ri-c { font-size:2.2mm; color:var(--ink-weak); letter-spacing:.04em;
+        flex:none; white-space:nowrap; }
+.ri-s { margin-left:auto; display:flex; flex-wrap:wrap; justify-content:flex-end;
+        gap:.3mm 1.8mm; text-align:right; }
+.ri-s i { font-style:normal; font-size:2.2mm; color:var(--ink-mid); white-space:nowrap; }
+.ri-s i.ri-m { color:var(--ink); }
+.ri-s b { font-family:'EB Garamond','Noto Serif JP',serif; font-weight:400;
+          font-size:2.4mm; margin-left:.7mm; }
 .lg-note { font-size:2.8mm; line-height:calc(var(--lead)*0.86); color:var(--ink-mid); margin-top:2mm; }
 .dots { flex:1; border-bottom:.15mm dotted var(--rule); margin:0 1.5mm; transform:translateY(-1mm); }
 .tp2, .co-p { font-family:'EB Garamond','Noto Serif JP',serif; font-size:2.9mm; color:var(--ink-mid); }
@@ -794,6 +834,24 @@ table.mx td.mx-d { outline:.35mm solid var(--ink); outline-offset:-.35mm; }
 
 /* 地図 */
 .mp svg { width:var(--frame-w); height:auto; display:block; }
+/* 図二は下に領の表を敷くので、図のほうを一割ほど詰める。 */
+.mp-s svg { width:90%; margin:0 auto; }
+
+/* 図の下の表。図一は州外十三項、図二は九つの領。 */
+.mfo { margin-top:1mm; }
+.mfo-c h4 { font-size:2.5mm; letter-spacing:.16em; color:var(--ink-weak);
+            border-bottom:.2mm solid var(--rule); padding-bottom:.7mm; margin-bottom:1.2mm; }
+.mfo-c ul { list-style:none; }
+.mfo-c li { font-size:2.7mm; line-height:1.62; }
+.mfo-c a { display:flex; align-items:baseline; }
+table.hd { border-collapse:collapse; width:100%; margin-top:1mm; }
+table.hd th { font-size:2.3mm; font-weight:400; letter-spacing:.14em; color:var(--ink-weak);
+              text-align:left; border-bottom:.2mm solid var(--rule); padding-bottom:.8mm; }
+table.hd td { font-size:2.7mm; padding:.85mm 0; border-bottom:.15mm solid var(--rule);
+              vertical-align:baseline; }
+.hd-h { width:26mm; font-weight:600; }
+.hd-s { width:26mm; color:var(--ink-mid); }
+.hd-f a { display:inline-flex; align-items:baseline; margin-right:3.2mm; }
 .dm { width:var(--frame-w); overflow:hidden; }
 .dm svg { width:100%; height:auto; display:block; }
 .dm-legend h3:first-child { margin-top:0; }

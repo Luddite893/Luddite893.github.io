@@ -141,7 +141,7 @@ function pageC(f, c, folio) {
       <div class="c3 in-cell"><div class="in-h">${x.h}</div><p>${x.text}</p></div>`).join('')}</div>`);
 }
 
-// その項が出てくる相関図を示す。図は巻末に集めてあるので、案内が要る。
+// その項が出てくる相関図を示す。図は前付に集めてあるので、案内が要る。
 const sheetsOf = (id) => {
   const t = THEMES.filter((x) => x.nodes.some((n) => n.id === id))
     .map((x) => `主題${x.n}「${x.ja}」`);
@@ -243,7 +243,7 @@ export const spread2Css = () => artworkCss() + `
 .gaps { font-size:2.95mm; line-height:calc(var(--lead)*0.94); text-indent:0;
         background:#f0eee7; padding:2.6mm 3mm; border-left:.6mm solid var(--ink-weak); }
 
-/* 関係。図は巻末の二十四枚に集めたので、ここは行だけを持つ。
+/* 関係。図は前付の二十四枚に集めたので、ここは行だけを持つ。
    相関図の札の中の「関係の行」と、同じ並び（語・紋章・名・註）にしてある。 */
 .rec-rel2 { margin-top:calc(var(--lead)*1.2); }
 .rel-see { float:right; font-size:2.2mm; letter-spacing:.04em; color:var(--ink-weak);

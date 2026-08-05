@@ -36,8 +36,17 @@ put('preface', { side: 'verso' });
 put('preface', { side: 'recto' });
 put('legend', { side: 'verso' });
 put('legend', { side: 'recto' });
-put('master', { side: 'verso' });
-put('master', { side: 'recto' });
+// 相関図。主題別八枚と分類別十六枚。
+// 第二版では巻末ではなく、前付の「凡例」と「地図」のあいだに置く。
+// 初版の全体相関図（円環）が座っていた位置である。あの一枚は読めなかったので廃した。
+// 読者は本編に入る前にここを通る。分類の色と紋章を、地図より先に覚える。
+const REL = [...THEMES, ...categories.flatMap((c) => categorySheets(c))];
+put('relTitle', { side: 'verso' });
+put('relTitle2', { side: 'recto' });
+REL.forEach((t, i) => put('relSheet', { side: i % 2 ? 'recto' : 'verso', t: i }));
+put('relIndex', { side: 'verso' });
+put('relIndex', { side: 'recto' });
+
 put('mapT', { side: 'verso' });
 put('mapS', { side: 'recto' });
 put('dist', { side: 'verso' });
@@ -56,12 +65,6 @@ for (const c of categories) {
     put('e4', { side: 'recto', id: f.id });
   }
 }
-
-// 相関図。主題別八枚と分類別十六枚を巻末にまとめる。
-const REL = [...THEMES, ...categories.flatMap((c) => categorySheets(c))];
-put('relTitle', { side: 'verso' });
-put('relTitle2', { side: 'recto' });
-REL.forEach((t, i) => put('relSheet', { side: i % 2 ? 'recto' : 'verso', t: i }));
 
 put('doorTable', { side: 'verso' });
 put('doorTable', { side: 'recto' });
@@ -86,6 +89,11 @@ if (slots.length % 4) { console.error(`総頁 ${slots.length} は四の倍数で
 const folioOf = {};
 slots.forEach((s, i) => { if (s.kind === 'e2') folioOf[s.id] = i + 1; });
 const FO = (id) => folioOf[id] ?? '—';
+
+// 相関図の枚目 → そのノンブル。相関図索引が引く。
+const relFolio = [];
+slots.forEach((s, i) => { if (s.kind === 'relSheet') relFolio[s.t] = i + 1; });
+const sheetFolio = (i) => relFolio[i];
 
 // ── 二　総索引の項目 ────────────────────────────
 // 組織名・別称・拠点の地名・領名・州名を一括して並べる。
@@ -130,9 +138,8 @@ const render = (s, i) => {
     case 'toc':     return M.toc(s.side, s.part === 0 ? categories.slice(0, 4) : categories.slice(4), FO, showFolio);
     case 'preface': return M.preface(s.side, showFolio);
     case 'legend':  return s.side === 'verso' ? M.legendL(showFolio) : M.legendR(showFolio);
-    case 'master':  return s.side === 'verso' ? M.masterL(showFolio) : M.masterR(showFolio);
-    case 'mapT':    return M.mapTamriel(showFolio);
-    case 'mapS':    return M.mapSkyrim(showFolio);
+    case 'mapT':    return M.mapTamriel(showFolio, FO);
+    case 'mapS':    return M.mapSkyrim(showFolio, FO);
     case 'dist':    return s.side === 'verso' ? M.distL(dm, showFolio) : M.distR(dm, FO, showFolio);
     case 'chron':   return s.side === 'verso' ? M.chronL(FO, showFolio) : M.chronR(FO, showFolio);
     case 'catTitle': {
@@ -157,6 +164,7 @@ const render = (s, i) => {
     case 'relTitle':  return M.relIntroL(showFolio);
     case 'relTitle2': return M.relIntroR(showFolio);
     case 'relSheet':  return M.relSheet(REL[s.t], s.side, showFolio);
+    case 'relIndex':  return M.relIndex(s.side, REL, sheetFolio, showFolio);
     case 'doorTable':    return M.doorTable(s.side, FO, showFolio);
     case 'peopleIndex':  return M.peopleIndex(s.side, FO, showFolio);
     case 'generalIndex': return M.generalIndex(s.side, showFolio, showFolio, terms);
@@ -211,20 +219,19 @@ export function manifest() {
       { title: '目次', page: 4 },
       { title: '序', page: 6 },
       { title: '読み方・凡例', page: 8 },
-      { title: '相関図について', page: 10 },
-      { title: '地図', page: 12 },
-      { title: '勢力分布図', page: 14 },
-      { title: '年表', page: 16 },
+      { title: '相関図', page: slots.findIndex((s) => s.kind === 'relTitle') + 1,
+        children: REL.map((t, i) => ({
+          title: `${t.kind ?? '主題'} ${t.n}　${t.ja}`,
+          page: slots.findIndex((s) => s.kind === 'relSheet' && s.t === i) + 1,
+        })).concat([{ title: '相関図索引', page: slots.findIndex((s) => s.kind === 'relIndex') + 1 }]) },
+      { title: '地図', page: slots.findIndex((s) => s.kind === 'mapT') + 1 },
+      { title: '勢力分布図', page: slots.findIndex((s) => s.kind === 'dist') + 1 },
+      { title: '年表', page: slots.findIndex((s) => s.kind === 'chron') + 1 },
       ...categories.map((c) => ({
         title: `${c.n}　${c.ja}`,
         page: slots.findIndex((s) => s.kind === 'catTitle' && s.cat === c.id) + 1,
         children: byCat(c.id).map((f) => ({ title: f.ja, page: folioOf[f.id] - 1 })),
       })),
-      { title: '相関図', page: slots.findIndex((s) => s.kind === 'relTitle') + 1,
-        children: REL.map((t, i) => ({
-          title: `${t.kind ?? '主題'} ${t.n}　${t.ja}`,
-          page: slots.findIndex((s) => s.kind === 'relSheet' && s.t === i) + 1,
-        })) },
       { title: '門戸・排他関係一覧', page: slots.findIndex((s) => s.kind === 'doorTable') + 1 },
       { title: '人物索引', page: slots.findIndex((s) => s.kind === 'peopleIndex') + 1 },
       { title: '総索引', page: slots.findIndex((s) => s.kind === 'generalIndex') + 1 },

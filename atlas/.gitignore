@@ -1,6 +1,7 @@
 out/*-raw.pdf
 out/links-*.json
 out/book*.html
+out/print.html
 out/spreads.html
 out/proof-*.html
 out/*.png
