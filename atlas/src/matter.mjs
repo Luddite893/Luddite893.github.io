@@ -17,7 +17,8 @@ import { card as relCard, categorySheets, themeSheet } from './relmap.mjs';
 import { THEMES } from './relmap-data.mjs';
 import { edges, edgesOf, KINDS, hostileDegree } from './relations.mjs';
 import { tamrielMap, skyrimMap, distributionMap, PROVINCES, FOREIGN, HOLDS, SEATS } from './map.mjs';
-import { eras, events, refNums } from './chronicle.mjs';
+import { eras, events, historyRefs, refsOf } from './chronicle.mjs';
+import { records2 } from './records2.mjs';
 import { plateOf } from './plates.mjs';
 import cal from './calibration.json' with { type: 'json' };
 
@@ -82,8 +83,17 @@ export const titlePage = () => sheet('recto', `
   </div>`);
 
 // ── 4-5　目次 ─────────────────────────────────
-export const toc = (side, cats, folioOf, folio) => sheet(side, `
-  <h2 class="mh">目次</h2>
+// 目次は本編の四十九項だけを並べていた。前付と後付が載っていない。
+// 相関図は二十八頁ある。目次に無い二十八頁は、無いのと変わらない。
+const tocSections = (title, list) => list.length ? `
+  <div class="toc-sec"><div class="toc-sh">${title}</div>
+    <ul>${list.map((x) => `<li><a class="xl" data-to="p:${x.page}">${x.ja}
+      <span class="dots"></span><span class="tp2">${x.page}</span></a></li>`).join('')}</ul>
+  </div>` : '';
+
+export const toc = (side, cats, folioOf, folio, sections = {}) => sheet(side, `
+  ${side === 'verso' ? '<h2 class="mh">目次</h2>' : ''}
+  ${tocSections('前付', sections.front ?? [])}
   <div class="toc">${cats.map((c) => `
     <div class="toc-cat" style="--c:${c.color}">
       <div class="toc-ch"><span class="toc-n">${c.n}</span><span class="toc-j">${c.ja}</span>
@@ -91,7 +101,8 @@ export const toc = (side, cats, folioOf, folio) => sheet(side, `
       <ul>${byCat(c.id).map((f) =>
         `<li><a class="xl" data-to="${f.id}"><span class="tn">${NUM(f)}</span>${f.ja}
           <span class="dots"></span><span class="tp2">${folioOf(f.id)}</span></a></li>`).join('')}</ul>
-    </div>`).join('')}</div>`,
+    </div>`).join('')}</div>
+  ${tocSections('後付', sections.back ?? [])}`,
   { head: mhead('目次', side), folio });
 
 // ── 6-7　序 ──────────────────────────────────
@@ -494,35 +505,99 @@ export const distR = (dm, folioOf, folio) => {
 };
 
 // ── 16-17　年表（見開き） ────────────────────────
-const chronRows = (list, folioOf) => list.map((e) => `
-  <tr><td class="cy">${e.year}</td>
-    <td class="ct">${e.text}</td>
-    <td class="cr">${refNums(e.refs, factions).map((n, i) => {
-      const f = factions[n - 1];
-      return `<a class="xl xn" data-to="${f.id}" title="${f.ja}">${n}</a>`;
-    }).join('')}</td></tr>`).join('');
-
-export const chronL = (folioOf, folio) => {
-  const list = events.filter((e) => e.era !== 'e4');
-  return sheet('verso', `
-  <h2 class="mh">年表</h2>
-  <div class="lg-lead">本書の各項に効いた出来事だけを採った。
-    右端の数字は関係する項の番号である。</div>
-  ${eras.filter((x) => x.id !== 'e4').map((era) => `
-    <div class="ch-era"><h3>${era.ja}${era.note ? `<span>${era.note}</span>` : ''}</h3>
-      <table class="ch">${chronRows(list.filter((e) => e.era === era.id), folioOf)}</table></div>`).join('')}`,
-  { head: mhead('年表', 'verso'), folio });
+// 年表は「年ごとの塊」で組む。行ごとに項番号を並べると、
+// 同じ年に出来事が七つある第四紀二〇一年で、同じ番号が七度刷られる。
+// 年を一度だけ立て、その年の出来事を並べ、番号は年に一度だけ添える。
+const HIST = historyRefs(records2);
+const chronYears = (era) => {
+  const list = events.filter((e) => e.era === era);
+  const keys = [...new Set(list.map((e) => e.year))];
+  return keys.map((y) => {
+    const rows = list.filter((e) => e.year === y);
+    const ids = [...new Set(rows.flatMap((e) => refsOf(e, HIST.at, factions)))]
+      .sort((a, b) => factions.findIndex((f) => f.id === a) - factions.findIndex((f) => f.id === b));
+    return { year: y, rows, ids };
+  });
 };
 
-export const chronR = (folioOf, folio) => sheet('recto', `
-  ${eras.filter((x) => x.id === 'e4').map((era) => `
-    <div class="ch-era"><h3>${era.ja}<span>${era.note}</span></h3>
-      <table class="ch">${chronRows(events.filter((e) => e.era === 'e4'), folioOf)}</table></div>`).join('')}
-  <p class="lg-note">年の記されない項が六つある。ナミラ信者・グレンモリルの魔女・
+// 番号の並び。ただし、ほとんどの項が並ぶ年では裏返す。
+// 第四紀二〇一年は本書の記述の現在なので、四十九項のほとんどが何かを持つ。
+// 一から四十九まで刷っても索引にならない。持たない側を出したほうが情報になる。
+const chronRefs = (ids) => {
+  const num = (id) => {
+    const f = factions.find((x) => x.id === id);
+    return `<a class="xl xn" data-to="${id}" title="${f.ja}">${NUM(f)}</a>`;
+  };
+  if (ids.length > factions.length * 0.6) {
+    const rest = factions.filter((f) => !ids.includes(f.id));
+    return `<div class="chy-r"><span class="chy-k">${factions.length - rest.length} 項に記述あり。
+      この年の記述を持たないのは</span>${rest.map((f) => num(f.id)).join('')}
+      <span class="chy-k">の ${rest.length} 項のみ</span></div>`;
+  }
+  return `<div class="chy-r">${ids.map(num).join('')}</div>`;
+};
+
+const chronOne = (b) => `
+  <div class="chy">
+    <div class="chy-y">${b.year}</div>
+    <div class="chy-b">
+      ${b.rows.map((e) => `<p class="chy-t">${e.text}</p>`).join('')}
+      ${chronRefs(b.ids)}
+    </div>
+  </div>`;
+
+// 年を特定できない記述を持つ項。紀ごとにまとめる。
+// これを落とすと、年表は「年の判る組織だけの本」の索引になってしまう。
+const chronVague = (era) => {
+  const s = HIST.vague.get(era);
+  if (!s?.size) return '';
+  const ids = [...s].sort((a, b) =>
+    factions.findIndex((f) => f.id === a) - factions.findIndex((f) => f.id === b));
+  return `<div class="chv"><span class="chv-k">年を特定できない記述</span>
+    ${ids.map((id) => {
+      const f = factions.find((x) => x.id === id);
+      return `<a class="xl xn" data-to="${id}" title="${f.ja}">${NUM(f)}</a>`;
+    }).join('')}</div>`;
+};
+
+// 紀の一部だけを刷る。第四紀は二十年ぶんあり、一頁には入らない。
+const chronEra = (eraId, from = 0, to = Infinity) => {
+  const era = eras.find((x) => x.id === eraId);
+  const all = chronYears(eraId);
+  const part = all.slice(from, to);
+  const first = from === 0, last = to >= all.length;
+  return `
+  <div class="ch-era"><h3>${era.ja}${first ? '' : '（続き）'}${era.note && first ? `<span>${era.note}</span>` : ''}</h3>
+    <div class="ch">${part.map(chronOne).join('')}</div>
+    ${last ? chronVague(eraId) : ''}</div>`;
+};
+
+// 年表は四頁に割る。どの紀をどこで切るかは、ここ一箇所で決める。
+const CHRON_PAGES = [
+  { lead: true, parts: [['me'], ['e1']] },
+  { parts: [['e2'], ['e3']] },
+  { parts: [['e4', 0, 10]] },
+  { parts: [['e4', 10]], note: true },
+];
+
+export const chron = (side, part, folio) => {
+  const p = CHRON_PAGES[part];
+  return sheet(side, `
+  ${p.lead ? `<h2 class="mh">年表</h2>
+    <div class="lg-lead">本書の各項に効いた出来事だけを採った。
+      年ごとに、その年に関わる項の番号を添えてある。
+      <b>番号は各項の「沿革」から機械で拾ったものである。</b>
+      沿革にその年の段落があれば、その項は必ずその年の欄に出る。
+      手で書き写していないので、本文を直せば年表も直る。</div>` : ''}
+  ${p.parts.map((a) => chronEra(...a)).join('')}
+  ${p.note ? `<p class="lg-note">「年を特定できない記述」は、その紀に属することは判るが
+    年を押さえられない段落を持つ項である。一段落でも持てばここに出る。
+    年の記述をまったく持たない項も六つある——ナミラ信者・グレンモリルの魔女・
     ペライトの信者・理想の支配者・各デイドラ王の信徒団・ウィスパーズの六項で、
     いずれも成立と消長を年で押さえられる記録が存在しない。
-    年表に載らないことは、それ自体がこれらの組織の性格を示している。</p>`,
-  { head: mhead('年表', 'recto'), folio });
+    年表に載らないことは、それ自体がこれらの組織の性格を示している。</p>` : ''}`,
+  { head: mhead('年表', side), folio });
+};
 
 // ── 分類扉（見開き） ───────────────────────────
 export const catTitle = (c, tab, folio) => sheet('verso', `
@@ -615,20 +690,137 @@ export const doorTable = (side, folioOf, folio) => {
 };
 
 // ── 後付　人物索引 ─────────────────────────────
+// 五十音の行。索引は行の見出しが無いと引けない。
+// 名の頭が漢字のものがある（「第一の書記」のように、名を伝えない者を役で立てた項）。
+// これらは五十音に置きようがないので、末尾に「名を伝えない者」としてまとめる。
+const KANA_ROWS = [
+  ['ア', 'アァイィウゥエェオォヴ'], ['カ', 'カガキギクグケゲコゴ'],
+  ['サ', 'サザシジスズセゼソゾ'],   ['タ', 'タダチヂッツヅテデトド'],
+  ['ナ', 'ナニヌネノ'],             ['ハ', 'ハバパヒビピフブプヘベペホボポ'],
+  ['マ', 'マミムメモ'],             ['ヤ', 'ヤャユュヨョ'],
+  ['ラ', 'ラリルレロ'],             ['ワ', 'ワヲンー'],
+];
+const rowOf = (s) => KANA_ROWS.find(([, cs]) => cs.includes(s[0]))?.[0] ?? null;
+
 export const peopleIndex = (side, folioOf, folio) => {
   const all = [];
   for (const f of factions) for (const p of records[f.id].people ?? []) all.push([p, f]);
   all.sort((a, b) => a[0].ja.localeCompare(b[0].ja, 'ja'));
-  const half = side === 'verso' ? all.slice(0, Math.ceil(all.length / 2)) : all.slice(Math.ceil(all.length / 2));
+  const named = all.filter(([p]) => rowOf(p.ja));
+  // 名を伝えない者は役で立ててある。漢字の並びに五十音は無いので、
+  // 所属の項番号で並べる。同じ組織の者が隣り合うほうが引ける。
+  const unnamed = all.filter(([p]) => !rowOf(p.ja))
+    .sort((a, b) => factions.indexOf(a[1]) - factions.indexOf(b[1])
+      || a[0].ja.localeCompare(b[0].ja, 'ja'));
+  // 行ごとに束ねてから、頁の分量で割る。行の途中で頁が変わっても、見出しを刷り直す。
+  const blocks = [];
+  for (const [row] of KANA_ROWS) {
+    const list = named.filter(([p]) => rowOf(p.ja) === row);
+    if (list.length) blocks.push({ row, list });
+  }
+  if (unnamed.length) blocks.push({ row: '名を伝えない者', list: unnamed, note: true });
+
+  const w = (b) => 1 + b.list.length;
+  const total = blocks.reduce((n, b) => n + w(b), 0);
+  let acc = 0, cut = 0;
+  for (; cut < blocks.length && acc < (total - 6) / 2; cut++) acc += w(blocks[cut]);
+  const half = side === 'verso' ? blocks.slice(0, cut) : blocks.slice(cut);
+
   return sheet(side, `
   ${side === 'verso' ? `<h2 class="mh">人物索引</h2>
-    <div class="lg-lead">本書に図版とともに現れる人物を五十音順に並べた。
-      同名の別人は所属で分けてある。名を伝えない者は所属の項に括った。</div>` : ''}
-  <div class="pi">${half.map(([p, f]) =>
-    `<div class="pi-r"><span class="pi-n">${p.ja}</span>
-      <span class="pi-o"><a class="xl" data-to="${f.id}">${f.ja}</a></span>
-      <span class="dots"></span><span class="tp2">${folioOf(f.id)}</span></div>`).join('')}</div>`,
+    <div class="lg-lead">本書に図版とともに現れる ${all.length} 名を五十音順に並べた。
+      名の下は、その人物について記録が伝えていることである。
+      同名の別人は所属で分けてある。名を伝えない者は末尾に括った。</div>` : ''}
+  <div class="pi">${half.map((b) => `
+    <div class="pi-g"><div class="pi-h">${b.row}</div>
+      ${b.list.map(([p, f]) => `<div class="pi-r">
+        <span class="pi-n">${p.ja}</span>
+        <span class="pi-w">${p.note}</span>
+        <span class="pi-o"><a class="xl" data-to="${f.id}">${f.ja}</a></span>
+        <span class="dots"></span><span class="tp2">${folioOf(f.id)}</span></div>`).join('')}
+    </div>`).join('')}</div>
+  ${side === 'recto' ? `<p class="lg-note">人物に項は無い。本書は組織を主語とするので、
+    人物は組織の欄の内側にのみ現れる。頁数は、その人物が載る項の頁である。</p>
+  <p class="lg-note">同じ名が二度以上出る箇所が三つある。
+    「エリシフ」はハーフィンガルの首長であり、同時に九大神聖堂の後援者でもある。
+    一人の人物が二つの項に現れる唯一の例である。
+    「隊士」と「姉妹の一人」は、名を伝えない者を役で立てたものであって、同一人ではない。
+    どちらも所属の欄で区別されたい。</p>` : ''}`,
     { head: mhead('人物索引', side), folio });
+};
+
+// ── 後付　出典索引 ─────────────────────────────
+//
+// 各項の「評判」は、必ず出典を伴う引用で組んである。百九十六件ある。
+// これまで、その一覧はどこにも無かった。序に挙げた底本は編纂の骨組であって、
+// 引用の一件ごとの出どころではない。
+//
+// 一覧にすると、序では見えなかったことが二つ出る。
+// 一つは、本書がどの記録に寄りかかっているか。ホワイトラン領と帝国軍で十八件ずつある。
+// もう一つは、同じ一通が二つ以上の項に引かれている件数である。
+// これは、二つの組織が同じ一人の目から記述されていることを意味する。
+const sourceList = () => {
+  const byDoc = new Map();      // 出典の文字列 → 引いた項
+  for (const f of factions) {
+    for (const c of records2[f.id].repute ?? []) {
+      if (!byDoc.has(c.src)) byDoc.set(c.src, []);
+      byDoc.get(c.src).push(f);
+    }
+  }
+  // 出どころ。括弧の中は年なので、先に落としてから頭の語を採る。
+  // 「ノクターナルの祭祀に関する註（年代不明）」のように、発した側が書かれていない
+  // 出典がある。頭の語を採ると註の題そのものが出どころになってしまうので、別に括る。
+  const ANON = '発した側の記されないもの';
+  const split = (s) => {
+    const bare = s.replace(/（[^）]*）/g, '').trim();
+    const i = bare.search(/[ 　]/);
+    return i < 0 ? [ANON, s] : [bare.slice(0, i), s.slice(i).trim()];
+  };
+  const groups = new Map();
+  for (const [src, fs] of byDoc) {
+    const [b, title] = split(src);
+    if (!groups.has(b)) groups.set(b, []);
+    groups.get(b).push({ src, title, fs });
+  }
+  for (const g of groups.values()) g.sort((a, b) => a.title.localeCompare(b.title, 'ja'));
+  const list = [...groups.entries()].sort((a, b) =>
+    (a[0] === ANON) - (b[0] === ANON)
+    || b[1].length - a[1].length || a[0].localeCompare(b[0], 'ja'));
+  const cites = [...byDoc.values()].reduce((n, v) => n + v.length, 0);
+  const shared = [...byDoc.values()].filter((v) => v.length > 1).length;
+  return { list, docs: byDoc.size, cites, shared };
+};
+
+export const sourceIndex = (side, folioOf, folio) => {
+  const { list, docs, cites, shared } = sourceList();
+  // 出どころは件数の多い順に並ぶので、頭から半分で割ると左頁だけが溢れる。
+  // 行数（見出し一行＋文書の行）で量って割る。左頁には見出しと前書きがある分を引く。
+  const w = (g) => 1 + g[1].length;
+  const total = list.reduce((n, g) => n + w(g), 0);
+  const budget = (total - 7) / 2;
+  let acc = 0, cut = 0;
+  for (; cut < list.length && acc < budget; cut++) acc += w(list[cut]);
+  const half = side === 'verso' ? list.slice(0, cut) : list.slice(cut);
+  return sheet(side, `
+  ${side === 'verso' ? `<h2 class="mh">出典索引</h2>
+    <div class="lg-lead">各項の「評判」に引いた ${cites} 件の出典を、
+      発した側ごとにまとめた。異なり ${docs} 点である。
+      数字は、その記録を引いた項の番号を示す。</div>` : ''}
+  <div class="si">${half.map(([body, docsOf]) => `
+    <div class="si-g"><h4>${body}<b>${docsOf.length}</b></h4>
+      ${docsOf.map(({ title, fs }) => `<div class="si-d">
+        <span class="si-t">${title}</span>
+        <span class="si-r">${fs.map((f) =>
+          `<a class="xl xn" data-to="${f.id}" title="${f.ja}">${NUM(f)}</a>`).join('')}</span>
+      </div>`).join('')}</div>`).join('')}</div>
+  ${side === 'recto' ? `<p class="lg-note">同じ一点が二つ以上の項に引かれている例が ${shared} 点ある。
+    これは、二つの組織が同じ一人の目から記述されているということである。
+    立場の違いが記述の違いとして現れているのか、
+    記録者ひとりの見方が二つの項に及んでいるのかは、この一覧では区別できない。
+    区別が必要な読者は、当該の項を並べて読まれたい。</p>
+  <p class="lg-note">閲覧を拒まれた記録は、この一覧に現れない。
+    引用できなかったからである。その一覧は序の末尾に置いた。</p>` : ''}`,
+    { head: mhead('出典索引', side), folio });
 };
 
 // ── 後付　総索引 ──────────────────────────────
@@ -666,9 +858,11 @@ export const colophon = (side, stats, folio) => sheet(side, `
       <tr><th>判型</th><td>A4 判（210 × 297 ミリ）　縦　${stats.pages} 頁</td></tr>
       <tr><th>組</th><td>六列グリッド　行送り 5.6 ミリ　45 行</td></tr>
       <tr><th>刷</th><td>二色（墨・分類色）</td></tr>
-      <tr><th>収録</th><td>${factions.length} 項　関係 ${edges.length} 件</td></tr>
+      <tr><th>収録</th><td>${factions.length} 項　関係 ${edges.length} 件　本文 ${stats.chars.toLocaleString('en')} 字</td></tr>
       <tr><th>図版</th><td>主図版 ${stats.scenes}　紋章 ${factions.length}　人物 ${stats.busts}
-        　小カット ${stats.cutPlacements}（${stats.cutKinds} 種）　地図 3　図式 ${factions.length + 1}</td></tr>
+        　小カット ${stats.cutPlacements}（${stats.cutKinds} 種）　地図 3　相関図 ${stats.relSheets} 枚</td></tr>
+      <tr><th>索引</th><td>人物 ${stats.people} 名　出典 ${stats.cites} 件（異なり ${stats.sources} 点）
+        　総索引 ${stats.terms} 項目　年表 ${stats.events} 行</td></tr>
     </table>
     <p class="cl-n">本書の図版はすべて銅版画調の線画による。調子は一つの規約に従って作られており、
       図版の大小にかかわらず彫りの目は等しい。</p>
@@ -756,6 +950,13 @@ a.xl { color:inherit; text-decoration:none; }
               font-size:2.4mm; color:var(--ink-weak); letter-spacing:.2em; }
 
 /* 目次 */
+.toc-sec { margin-bottom:calc(var(--lead)*0.9); }
+.toc + .toc-sec { margin-top:calc(var(--lead)*1.6); margin-bottom:0; }
+.toc-sh { font-size:2.5mm; letter-spacing:.2em; color:var(--ink-weak);
+          border-bottom:.35mm solid var(--ink); padding-bottom:.9mm; margin-bottom:1.2mm; }
+.toc-sec ul { list-style:none; columns:2; column-gap:var(--gutter); }
+.toc-sec li { font-size:2.85mm; line-height:calc(var(--lead)*0.86); break-inside:avoid; }
+.toc-sec a { display:flex; align-items:baseline; }
 .toc { columns:2; column-gap:var(--gutter); }
 .toc-cat { break-inside:avoid; margin-bottom:calc(var(--lead)*0.9); }
 .toc-ch { display:flex; align-items:baseline; gap:2mm; border-bottom:.4mm solid var(--c);
@@ -865,6 +1066,29 @@ table.hd td { font-size:2.7mm; padding:.85mm 0; border-bottom:.15mm solid var(--
 /* 年表 */
 .ch-era h3 { display:flex; align-items:baseline; gap:3mm; border-bottom:.4mm solid var(--ink); padding-bottom:1mm; }
 .ch-era h3 span { font-size:2.4mm; font-weight:400; color:var(--ink-weak); letter-spacing:.06em; }
+/* 年表。年を一度だけ立て、その年の出来事をぶら下げる。 */
+.ch { margin-top:1.4mm; }
+.chy { display:flex; gap:3mm; border-bottom:.15mm solid var(--rule); padding:1.1mm 0; }
+.chy-y { width:11mm; flex:none; font-family:'EB Garamond','Noto Serif JP',serif;
+         font-size:3mm; color:var(--ink-mid); }
+.chy-b { flex:1; min-width:0; }
+.chy-t { font-size:2.85mm; line-height:calc(var(--lead)*0.9); text-align:justify; }
+.chy-r { margin-top:.4mm; }
+.chy-k { font-size:2.35mm; color:var(--ink-weak); }
+.chv { margin-top:1.6mm; font-size:2.5mm; color:var(--ink-weak); }
+.chv-k { letter-spacing:.14em; margin-right:1.4mm; }
+
+/* 出典索引。二段組で流す。出どころの見出しは段をまたがせない。 */
+.si { columns:3; column-gap:calc(var(--gutter)*0.9); margin-top:1mm; }
+.si-g { break-inside:avoid; margin-bottom:1.5mm; }
+.si-g h4 { display:flex; align-items:baseline; font-size:2.45mm; font-weight:600;
+           border-bottom:.2mm solid var(--rule); padding-bottom:.4mm; margin-bottom:.5mm; }
+.si-g h4 b { margin-left:auto; font-weight:400; font-size:2.1mm; color:var(--ink-weak);
+             font-family:'EB Garamond','Noto Serif JP',serif; }
+.si-d { display:flex; align-items:baseline; gap:1.2mm; font-size:2.3mm;
+        line-height:calc(var(--lead)*0.74); }
+.si-t { color:var(--ink-mid); }
+.si-r { margin-left:auto; white-space:nowrap; }
 table.ch { width:100%; border-collapse:collapse; }
 table.ch td { vertical-align:top; padding:.9mm 0; border-bottom:.15mm solid var(--rule); font-size:2.85mm;
               line-height:calc(var(--lead)*0.8); }
@@ -918,8 +1142,16 @@ table.dt td { font-size:2.85mm; padding:1.05mm 0; border-bottom:.15mm solid var(
 .pi, .gi { columns:2; column-gap:var(--gutter); }
 .pi-r, .gi-r { display:flex; align-items:baseline; font-size:2.8mm;
                line-height:calc(var(--lead)*0.82); break-inside:avoid; }
-.pi-n { font-weight:600; }
-.pi-o { margin-left:2mm; color:var(--ink-mid); font-size:2.5mm; }
+.pi-g { break-inside:avoid; }
+.pi-h { font-size:2.4mm; letter-spacing:.2em; color:var(--ink-weak);
+        border-bottom:.2mm solid var(--rule); padding-bottom:.5mm;
+        margin:1.6mm 0 .8mm; }
+.pi-g:first-child .pi-h { margin-top:0; }
+.pi-n { font-weight:600; flex:none; }
+.pi-w { margin-left:1.8mm; font-size:2.4mm; color:var(--ink-mid);
+        min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pi-o { margin-left:2mm; color:var(--ink-mid); font-size:2.5mm;
+        flex:none; white-space:nowrap; }
 .gi-see { color:var(--ink-mid); font-size:2.5mm; margin-left:1.4mm; }
 
 /* 追記欄 */

@@ -1,7 +1,7 @@
 // 一冊に組む
 //
-// 第二版は 264 頁。丁合いの都合で四の倍数に揃えてある。
-//   前付 17 ／ 本編 49 項 × 4 頁 ＋ 分類扉 14 ／ 相関図 26 ／ 後付 11
+// 第二版は 268 頁。丁合いの都合で四の倍数に揃えてある。
+//   前付 45（うち相関図 28・地図 4・年表 4）／ 本編 49 項 × 4 頁 ＋ 分類扉 14 ／ 後付 13
 //
 // ノンブルの偶奇が命である。見開きは必ず「偶数＝左」「奇数＝右」で始まる。
 // 一頁ずれると、四十九の見開きがすべて割れる。
@@ -18,6 +18,8 @@ import { categorySheets, relmapCss } from './relmap.mjs';
 import { THEMES } from './relmap-data.mjs';
 import { distributionMap, SEATS, HOLDS, PROVINCES } from './map.mjs';
 import { plateStats } from './plates.mjs';
+import { records2 } from './records2.mjs';
+import { events as chronEvents } from './chronicle.mjs';
 import * as M from './matter.mjs';
 
 const catOf = (f) => categories.find((c) => c.id === f.cat);
@@ -51,8 +53,8 @@ put('mapT', { side: 'verso' });
 put('mapS', { side: 'recto' });
 put('dist', { side: 'verso' });
 put('dist', { side: 'recto' });
-put('chron', { side: 'verso' });
-put('chron', { side: 'recto' });
+// 年表は四頁。沿革二百四十四段落の年を流し込んだので、二頁では入らない。
+for (let i = 0; i < 4; i++) put('chron', { side: i % 2 ? 'recto' : 'verso', part: i });
 
 for (const c of categories) {
   put('catTitle', { side: 'verso', cat: c.id });
@@ -70,6 +72,8 @@ put('doorTable', { side: 'verso' });
 put('doorTable', { side: 'recto' });
 put('peopleIndex', { side: 'verso' });
 put('peopleIndex', { side: 'recto' });
+put('sourceIndex', { side: 'verso' });
+put('sourceIndex', { side: 'recto' });
 put('generalIndex', { side: 'verso' });
 put('generalIndex', { side: 'recto' });
 for (let i = 1; i <= 4; i++) put('notes', { side: i % 2 ? 'verso' : 'recto', n: i });
@@ -89,11 +93,36 @@ if (slots.length % 4) { console.error(`総頁 ${slots.length} は四の倍数で
 const folioOf = {};
 slots.forEach((s, i) => { if (s.kind === 'e2') folioOf[s.id] = i + 1; });
 const FO = (id) => folioOf[id] ?? '—';
+// 頁そのものを指す鍵。目次の前付・後付の行が引く。
+// 内部リンクは folioOf を通して解決されるので、鍵をここに足しておけばよい。
+slots.forEach((s, i) => { folioOf[`p:${i + 1}`] = i + 1; });
 
 // 相関図の枚目 → そのノンブル。相関図索引が引く。
 const relFolio = [];
 slots.forEach((s, i) => { if (s.kind === 'relSheet') relFolio[s.t] = i + 1; });
 const sheetFolio = (i) => relFolio[i];
+
+// 目次に載せる前付・後付。位置は slots から採る。手で書かない。
+const first = (k) => slots.findIndex((s) => s.kind === k) + 1;
+const sections = {
+  front: [
+    { ja: '序', page: first('preface') },
+    { ja: '読み方・凡例', page: first('legend') },
+    { ja: '相関図　主題別八枚・分類別十六枚', page: first('relTitle') },
+    { ja: '相関図索引', page: first('relIndex') },
+    { ja: '図一　タムリエル全図／図二　スカイリム九領図', page: first('mapT') },
+    { ja: '図三　勢力分布図', page: first('dist') },
+    { ja: '年表', page: first('chron') },
+  ],
+  back: [
+    { ja: '門戸・排他関係一覧', page: first('doorTable') },
+    { ja: '人物索引', page: first('peopleIndex') },
+    { ja: '出典索引', page: first('sourceIndex') },
+    { ja: '総索引', page: first('generalIndex') },
+    { ja: '追記欄', page: first('notes') },
+    { ja: '奥付', page: first('colophon') },
+  ],
+};
 
 // ── 二　総索引の項目 ────────────────────────────
 // 組織名・別称・拠点の地名・領名・州名を一括して並べる。
@@ -126,7 +155,21 @@ const terms = buildTerms();
 const dm = distributionMap({ factions, records, categories, size: 1500 });
 const ps = plateStats();
 const busts = factions.reduce((n, f) => n + (records[f.id].people ?? []).length, 0);
-const stats = { pages: slots.length, busts, ...ps };
+// 奥付の数字は、すべてここで数える。手で書いた数字は、必ずどこかで古くなる。
+const chars = Object.values(records2).reduce((n, r) =>
+  n + [r.summary, r.gaps].join('').length
+  + (r.history ?? []).reduce((m, h) => m + h.text.length, 0)
+  + (r.inner ?? []).reduce((m, x) => m + x.text.length, 0)
+  + (r.repute ?? []).reduce((m, c) => m + c.text.length, 0), 0);
+const cited = new Set();
+let cites = 0;
+for (const r of Object.values(records2)) for (const c of r.repute ?? []) { cites++; cited.add(c.src); }
+const stats = {
+  pages: slots.length, busts, chars, cites, sources: cited.size,
+  relSheets: REL.length, terms: terms.length, events: chronEvents.length,
+  people: factions.reduce((n, f) => n + (records[f.id].people ?? []).length, 0),
+  ...ps,
+};
 
 const render = (s, i) => {
   const folio = i + 1;
@@ -135,13 +178,14 @@ const render = (s, i) => {
     case 'cover':   return M.cover();
     case 'blank':   return M.blankPage('verso');
     case 'title':   return M.titlePage();
-    case 'toc':     return M.toc(s.side, s.part === 0 ? categories.slice(0, 4) : categories.slice(4), FO, showFolio);
+    case 'toc':     return M.toc(s.side, s.part === 0 ? categories.slice(0, 4) : categories.slice(4),
+                      FO, showFolio, s.part === 0 ? { front: sections.front } : { back: sections.back });
     case 'preface': return M.preface(s.side, showFolio);
     case 'legend':  return s.side === 'verso' ? M.legendL(showFolio) : M.legendR(showFolio);
     case 'mapT':    return M.mapTamriel(showFolio, FO);
     case 'mapS':    return M.mapSkyrim(showFolio, FO);
     case 'dist':    return s.side === 'verso' ? M.distL(dm, showFolio) : M.distR(dm, FO, showFolio);
-    case 'chron':   return s.side === 'verso' ? M.chronL(FO, showFolio) : M.chronR(FO, showFolio);
+    case 'chron':   return M.chron(s.side, s.part, showFolio);
     case 'catTitle': {
       const c = categories.find((x) => x.id === s.cat);
       return M.catTitle(c, edgeTab(c, false), showFolio);
@@ -167,6 +211,7 @@ const render = (s, i) => {
     case 'relIndex':  return M.relIndex(s.side, REL, sheetFolio, showFolio);
     case 'doorTable':    return M.doorTable(s.side, FO, showFolio);
     case 'peopleIndex':  return M.peopleIndex(s.side, FO, showFolio);
+    case 'sourceIndex':  return M.sourceIndex(s.side, FO, showFolio);
     case 'generalIndex': return M.generalIndex(s.side, showFolio, showFolio, terms);
     case 'notes':        return M.notesPage(s.side, s.n, showFolio);
     case 'colophon':     return M.colophon(s.side, stats, showFolio);
@@ -234,6 +279,7 @@ export function manifest() {
       })),
       { title: '門戸・排他関係一覧', page: slots.findIndex((s) => s.kind === 'doorTable') + 1 },
       { title: '人物索引', page: slots.findIndex((s) => s.kind === 'peopleIndex') + 1 },
+      { title: '出典索引', page: slots.findIndex((s) => s.kind === 'sourceIndex') + 1 },
       { title: '総索引', page: slots.findIndex((s) => s.kind === 'generalIndex') + 1 },
       { title: '追記欄', page: slots.findIndex((s) => s.kind === 'notes') + 1 },
       { title: '奥付', page: slots.findIndex((s) => s.kind === 'colophon') + 1 },

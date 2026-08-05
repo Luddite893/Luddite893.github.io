@@ -15,7 +15,7 @@ import { emblem } from './heraldry.mjs';
 import { plates, plateOf } from './plates.mjs';
 import { scene, cut, CUTS, STRUCTURES } from './scene.mjs';
 import { bust } from './busts.mjs';
-import { egoDiagram, catDiagram } from './diagram.mjs';
+import { catDiagram } from './diagram.mjs';
 import { themeSheet, categorySheets } from './relmap.mjs';
 import { THEMES } from './relmap-data.mjs';
 import { tamrielMap, skyrimMap, distributionMap, miniMap } from './map.mjs';
@@ -84,9 +84,12 @@ const put = (path, svg, note) => { writeFileSync(path, wrap(svg, note)); n++; };
 }
 
 // ── 五　図式 ────────────────────────────────
+let diagrams = 0;
 {
+  const before = n;
   const d = dir('図式/');
-  // 円環の全体相関図は第二版で廃した。主題別・分類別の十九枚を出す。
+  // 円環の全体相関図は第二版で廃した。主題別八枚・分類別十六枚を出す。
+  // 各項の自我図も廃した。第二版の四頁目は、図ではなく関係の行を持つ。
   THEMES.forEach((t, i) => put(d + `主題${String(i + 1).padStart(2, '0')}_${t.ja}.svg`,
     themeSheet(t), `札 ${t.nodes.length} 点`));
   for (const c of categories) {
@@ -98,10 +101,7 @@ const put = (path, svg, note) => { writeFileSync(path, wrap(svg, note)); n++; };
     put(d + `分類${c.n}_関係の行き先.svg`, catDiagram(c.id, { w: 174, h: 118 }),
       `分類 ${c.n} ${c.ja}　二部グラフ`);
   });
-  factions.forEach((f, i) => {
-    put(d + `${pad(i + 1)}_${safe(f.ja)}_関係.svg`, egoDiagram(f.id, { w: 174, h: 60 }),
-      `${f.ja}　自我図`);
-  });
+  diagrams = n - before;
 }
 
 // ── 六　地図 ────────────────────────────────
@@ -131,4 +131,4 @@ const put = (path, svg, note) => { writeFileSync(path, wrap(svg, note)); n++; };
 console.log(`図版データ ${n} 点 → out/図版データ/`);
 console.log(`  紋章 ${factions.length}×2　主図版 ${factions.length}　小カット ${Object.keys(CUTS).length}`
   + `　人物 ${factions.reduce((a, f) => a + (records[f.id].people ?? []).length, 0)}`
-  + `　図式 ${factions.length + 1 + categories.length}　地図 4`);
+  + `　図式 ${diagrams}　地図 4`);

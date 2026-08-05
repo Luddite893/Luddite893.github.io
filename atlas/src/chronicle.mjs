@@ -31,8 +31,11 @@ export const events = [
 
   { era: 'e2', year: '321', text: 'モラグ・トング、寺院の認可のもとに処刑令状の発行を始める。', refs: ['moragtong'] },
   { era: 'e2', year: '431', text: '暗殺結社の禁令。令状を持たぬ一派が分岐し、闇の一党を名乗る。', refs: ['brotherhood', 'moragtong'] },
+  { era: 'e2', year: '582', text: 'リーチが帝国の版図に入る。土地の慣行と外来の法が併存し、調停する制度は作られない。', refs: ['forsworn'] },
+  { era: 'e2', year: '758', text: 'ウィンターホールドの大崩壊。市街の大半が海に落ち、学院の建つ岩塊のみが残る。', refs: ['winterhold'] },
   { era: 'e2', year: '852', text: 'タイバー・セプティム、帝国を建てる。皇帝の刃が親衛と情報を担う。', refs: ['blades', 'penitus'] },
 
+  { era: 'e3', year: '240', text: '「影の印」の最古の用例が州外で報告される。この時期には州境を越えて通用していた。', refs: ['thieves'] },
   { era: 'e3', year: '389', text: 'サイジック会、帝国の助言者の座を退く。サイノッドがその位置を占める。', refs: ['psijic', 'synod'] },
   { era: 'e3', year: '427', text: 'レッドマウンテンの変。三柱の神格が失われ、寺院は聖人の崇敬へ移る。', refs: ['tribunal'] },
   { era: 'e3', year: '433', text: 'オブリビオンの動乱。神話の夜明けによる皇帝の暗殺。ブレイズは大半を失う。', refs: ['mythicdawn', 'blades'] },
@@ -56,7 +59,10 @@ export const events = [
   { era: 'e4', year: '188', text: 'マルカルスの事変。リーチの蜂起と鎮圧。フォースウォーンの現在の形が定まる。', refs: ['forsworn', 'silverblood'] },
   { era: 'e4', year: '190', text: '街道の治安機構が後退し、廃砦を恒久的に占拠する集団が急増する。', refs: ['bandits', 'legion'] },
   { era: 'e4', year: '195', text: 'ドーンガード、砦を放棄する。再興は 201 年を待つ。', refs: ['dawnguard', 'volkihar'] },
+  { era: 'e4', year: '197', text: '失踪の手口が一致するという根拠に、模倣と判定された一件が生じる。', refs: ['shadows'] },
   { era: 'e4', year: '199', text: 'シルバーハンド、砦を複数占拠。同胞団の内円との衝突が記録に現れ始める。', refs: ['silverhand', 'companions'] },
+  { era: 'e4', year: '200', text: 'ステンダールの守人の本部が焼失。名簿と呪物の目録が同じ火で失われる。', refs: ['vigilants'] },
+  { era: 'e4', year: '200', text: 'ドーンガードの砦の修復が始まる。同年、ヴォルキハル一族の活動再開の報告が出る。', refs: ['dawnguard', 'volkihar'] },
   { era: 'e4', year: '201', text: '高王トリグの死。内戦の開始。ムートは開かれないまま現在に至る。', refs: ['stormcloaks', 'legion', 'moot'] },
   { era: 'e4', year: '201', text: 'ホワイトランの二家、内戦により公然と分かれる。市場を挟んで往来が絶える。', refs: ['battleborn', 'graymane'] },
   { era: 'e4', year: '201', text: '隊商、いずれの都市でも城壁内への立ち入りを認められなくなる。請願は保留のまま。', refs: ['khajiitcaravans'] },
@@ -69,6 +75,63 @@ export const events = [
 // 各行に添える項番号。年表から本編へ引くための唯一の手がかりである。
 export const refNums = (refs, factions) =>
   refs.map((id) => factions.findIndex((f) => f.id === id) + 1).filter((n) => n > 0);
+
+// ── 沿革からの流し込み ──────────────────────────
+//
+// 各項の沿革は、段落ごとに年の札を持っている（'4E 175' のような形）。
+// 二百四十四段落ある。これを年表に手で書き写せば、必ずどちらかが古くなる。
+// そこで札のほうを機械に読ませ、年表の行に項を結びつける。
+// 手で書いた refs は残す。沿革に段落が無くても、その出来事に効いた項はあるからである。
+//
+// 札の形は四通りある。
+//   '4E 175'      年が特定できる
+//   '4E 175以後'  その年を起点として、以後
+//   '4E 176–201'  区間。起点の年に結ぶ
+//   '4E 17x'／'3E 末'／'1E'／'不明'   年を特定できない
+// 最後のものは年表の行に結べない。紀ごとの欄にまとめて出す。
+
+const ERA = { ME: 'me', '1E': 'e1', '2E': 'e2', '3E': 'e3', '4E': 'e4' };
+
+export function parseYear(label) {
+  const m = /^(ME|[1-4]E)/.exec(label);
+  if (!m) return { era: null, year: null, vague: true };     // 不明
+  const era = ERA[m[1]];
+  const rest = label.slice(m[1].length).trim();
+  // 起点の年。区間なら前の側、'頃' や '以後' は付いていても年そのものは読める。
+  const n = /^(\d+)/.exec(rest);
+  if (!n) return { era, year: null, vague: true };            // '1E'／'3E 末'／'1E–3E'
+  if (/x/.test(rest)) return { era, year: null, vague: true }; // '4E 17x'
+  return { era, year: n[1], vague: false, from: /以後|–|—/.test(rest) };
+}
+
+// 年表の行 → その年に沿革の段落を持つ項の id
+export function historyRefs(records2) {
+  const at = new Map();     // `${era}:${year}` → Set(id)
+  const vague = new Map();  // era → Set(id)
+  for (const [id, r] of Object.entries(records2)) {
+    for (const h of r.history ?? []) {
+      const p = parseYear(h.year);
+      if (!p.era) continue;
+      if (p.vague) {
+        if (!vague.has(p.era)) vague.set(p.era, new Set());
+        vague.get(p.era).add(id);
+        continue;
+      }
+      const k = `${p.era}:${p.year}`;
+      if (!at.has(k)) at.set(k, new Set());
+      at.get(k).add(id);
+    }
+  }
+  return { at, vague };
+}
+
+// 手の refs と沿革からの refs を合わせる。順は本編の項番号順にそろえる。
+export function refsOf(e, at, factions) {
+  const s = new Set(e.refs);
+  for (const id of at.get(`${e.era}:${e.year}`) ?? []) s.add(id);
+  return [...s].sort((a, b) =>
+    factions.findIndex((f) => f.id === a) - factions.findIndex((f) => f.id === b));
+}
 
 export const stats = () => ({
   events: events.length,
