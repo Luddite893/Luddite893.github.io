@@ -199,7 +199,11 @@ export const spread2Css = () => artworkCss() + `
 .art-stamp { position:absolute; bottom:-11mm; left:0; font-size:2.2mm; letter-spacing:.1em;
              color:#a8a49a; }
 .art { margin-bottom:0; }
-.pf2 .art { width:34mm; height:51mm; }
+.pf2 .art { width:34mm; height:51mm; background:#fff; }
+/* 支給図版は乗算で敷くので、白は透けて紙の地が出る。
+   一方こちらの描画は白い地を自分で持っている。
+   入稿が途中の段では両者が一列に並ぶので、支給側にも同じ白地を敷く。
+   全点が揃えば見た目は変わらない。 */
 
 /* 節見出し。初版の .lbl と同じ位置に立つが、格を一段上げる。 */
 .sec-h { font-size:2.8mm; letter-spacing:.2em; color:var(--ink-weak); margin-bottom:1.6mm;
