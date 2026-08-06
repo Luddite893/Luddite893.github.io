@@ -1,0 +1,11 @@
+import { chromium } from 'playwright-core';
+import { fileURLToPath } from 'node:url';
+const out = fileURLToPath(new URL('../out/', import.meta.url));
+const b = await chromium.launch({ executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const p = await b.newPage({ viewport:{width:1500,height:1100}, deviceScaleFactor:2 });
+await p.goto('file://' + out + 'proof-ulfric.html', { waitUntil:'networkidle' });
+await p.waitForTimeout(500);
+await p.locator('.w').screenshot({ path: out + 'ulfric-large.png' });
+await p.locator('.r').first().screenshot({ path: out + 'ulfric-real.png' });
+console.log('ok');
+await b.close();
