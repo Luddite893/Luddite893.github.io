@@ -1,7 +1,7 @@
 // 図版の指示文を、本書のデータから書き出す
 //
-//   node src/prompt-artwork.mjs            → out/図版プロンプト.tsv / .json
-//   node src/prompt-artwork.mjs --faces    → 人物図版に顔貌を描かせる（既定は描かせない）
+//   node src/prompt-artwork.mjs             → out/図版プロンプト.tsv / .json
+//   node src/prompt-artwork.mjs --no-faces  → 顔貌を描かせない（初版の規定に戻す）
 //
 // ── なぜ機械で書くか ────────────────────────────
 // 二百三十二点の指示文を手で書けば、必ず前半と後半で語彙が変わる。
@@ -12,10 +12,13 @@
 // これで「同じ彫師の手」を、生成の側にも要求できる。
 //
 // ── 顔貌について ──────────────────────────────
-// 本書の凡例には「人物図版は肖像ではない。記録に残る特徴——種族・被り物・装いのみを
-// 図取りしたもので、顔貌は本書の関知するところではない」と刷ってある。
-// 生成した顔を入れると、この一文が嘘になる。
-// 既定では顔を描かせない。描かせる場合は --faces を付け、凡例のほうを直す。
+// 発注者様のご指示により、第二版は**顔を描く**。凡例も書き換えた（matter.mjs）。
+// 顔は記録から出てくるものではないので、凡例では
+// 「画工の構成であって、記録の主張ではない」と断ってある。
+//
+// 年齢は**数で書く**。「deeply aged」だけでは中年に落ち着く。
+// 数は記録に無いので、指示文の側にだけ持たせる。records には書き込まない。
+// 書き込めば、本書が知らない年齢を記録として主張することになる。
 
 import { writeFileSync } from 'node:fs';
 import { factions, categories } from './factions.mjs';
@@ -23,8 +26,9 @@ import { records2 } from './records2.mjs';
 import { plates } from './plates.mjs';
 import { SIZE } from './artwork.mjs';
 import { CAPTION_EN } from './prompt-captions.mjs';
+import { AGE } from './prompt-ages.mjs';
 
-const FACES_ON = process.argv.includes('--faces');
+const FACES_ON = !process.argv.includes('--no-faces');
 
 // ── 全点で共通の前置き ──────────────────────────
 // 刷りの条件をそのまま書く。「銅版画風」だけでは、彫りの目が点ごとに変わる。
@@ -47,7 +51,14 @@ const SCENE = [
 ].join(' ');
 
 const BUST = FACES_ON
-  ? 'A bust portrait, head and shoulders, cut off at the chest. Plain white ground behind.'
+  ? [
+    'A bust portrait, head and shoulders, cut off at the chest. Plain white ground behind.',
+    'The face is fully drawn as a specific individual: eyes with visible irises and a defined'
+    + ' direction of gaze, individual bone structure at the brow, nose and jaw, and a settled'
+    + ' expression that reads as character rather than emotion.',
+    'Age is rendered explicitly in the flesh — where the record notes an aged subject, the lines,'
+    + ' hollows and slackness must be unmistakable.',
+  ].join(' ')
   : [
     'A bust, head and shoulders, cut off at the chest. Plain white ground behind.',
     'THE FACE IS NOT DRAWN: no eyes, no nose, no mouth, no expression.',
@@ -85,8 +96,12 @@ const POSE = {
 };
 const MARK = {
   none: '', scar: 'a scar across one cheek', eyepatch: 'a leather patch over one eye',
-  aged: 'deeply aged, lined skin', earless: 'one ear missing',
+  // 'aged' の見た目は AGE のほうで数として書く。ここでは重ねない。
+  aged: '', earless: 'one ear missing',
 };
+
+// 年齢は prompt-ages.mjs に一名ずつ書いてある。役の語から引く形は採らない。
+// 「先代トリグの妻」の「先代」は夫に係る。語の一致では係り先が判らない。
 const PROP = {
   sword: 'a straight sword held upright before the chest', axe: 'a war axe', bow: 'a bow',
   shield: 'a round shield', spear: 'a spear', mace: 'a mace', warhammer: 'a war hammer',
@@ -137,10 +152,12 @@ function scenePrompt(f) {
 }
 
 // ── 人物図版 ────────────────────────────────────
-function bustPrompt(f, p) {
+function bustPrompt(f, p, key) {
   const bits = [
     HOUSE, BUST,
     `Subject: ${RACE[p.race] ?? RACE.human}, ${BUILD[p.build ?? 'normal']}, ${POSE[p.pose ?? 'frontal']}.`,
+    // 年齢は数で。顔を描かせない設定のときは、書いても意味がないので落とす。
+    FACES_ON && AGE[key] ? `This is the face of a person ${AGE[key]}.` : '',
     `${HEADGEAR[p.headgear ?? 'none']}, ${HAIR[p.hair ?? 'none']}, wearing ${GARMENT[p.garment ?? 'robe']}.`,
     MARK[p.mark] ? `${MARK[p.mark]}.` : '',
     p.prop && PROP[p.prop] ? `Holding ${PROP[p.prop]}, small, at the lower edge.` : '',
@@ -163,7 +180,7 @@ for (const f of factions) {
       種別: '人物図版', 配置名: `${f.id}-${i + 1}`, 項: num(f), 名称: `${f.ja}／${p.ja}`,
       分類: `${catOf(f).n} ${catOf(f).ja}`,
       寸法: `${SIZE.人物図版.w}×${SIZE.人物図版.h}mm`, 比: '2:3',
-      prompt: bustPrompt(f, p),
+      prompt: bustPrompt(f, p, `${f.id}-${i + 1}`),
     });
   });
 }
@@ -177,5 +194,5 @@ writeFileSync(new URL('図版プロンプト.tsv', out),
 
 const scenes = jobs.filter((j) => j.種別 === '主図版').length;
 console.log(`指示文 ${jobs.length} 件（主図版 ${scenes}／人物図版 ${jobs.length - scenes}）`);
-console.log(`  顔貌　${FACES_ON ? '描かせる（--faces）。凡例の書き換えが要る' : '描かせない（既定。凡例のとおり）'}`);
+console.log(`  顔貌　${FACES_ON ? '描かせる（既定）。年齢は数で書いている' : '描かせない（--no-faces）'}`);
 console.log(`  → out/図版プロンプト.tsv ／ .json`);
