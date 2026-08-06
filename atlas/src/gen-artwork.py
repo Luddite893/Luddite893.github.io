@@ -18,6 +18,14 @@
 
 業者ごとに形が違うので、こちらで一社に決め打ちしていない。
 上の五つを与えれば、どの業者にも同じ手順で投げられる。
+設定の実例は src/art-env.example.sh にある。**鍵はそこにも書かない。**
+
+── 道筋の * ──────────────────────────────────────
+配列のどの要素に画像が入るかが応答ごとに変わる業者がある。
+（Gemini は parts に説明文が先に入ることがあり、画像は 0 番目とはかぎらない。）
+道筋の要素に * を書くと、**残りの道筋が解ける最初の要素**を採る。
+
+    candidates.0.content.parts.*.inlineData.data
 
 ── 途中から続けられる ────────────────────────────
 すでに置かれている図版は飛ばす。二百三十二点を一度に通す必要はなく、
@@ -58,12 +66,28 @@ def image_ext(b: bytes):
     return None
 
 
-def dig(obj, path: str):
-    """'data.0.b64_json' のような道筋で応答から値を取り出す。"""
+def dig(obj, path):
+    """'data.0.b64_json' のような道筋で応答から値を取り出す。
+
+    * は「残りの道筋が解ける最初の要素」を意味する。
+    """
+    keys = path.split(".") if isinstance(path, str) else list(path)
     cur = obj
-    for key in path.split("."):
+    for i, key in enumerate(keys):
+        rest = keys[i + 1:]
+        if key == "*":
+            if not isinstance(cur, list):
+                return None
+            for item in cur:
+                got = dig(item, rest) if rest else item
+                if got is not None:
+                    return got
+            return None
         if isinstance(cur, list):
-            cur = cur[int(key)]
+            try:
+                cur = cur[int(key)]
+            except (ValueError, IndexError):
+                return None
         elif isinstance(cur, dict):
             cur = cur.get(key)
         else:
@@ -71,6 +95,15 @@ def dig(obj, path: str):
         if cur is None:
             return None
     return cur
+
+
+# 鍵や請求の不備は、投げ直しても直らない。二百三十二点を空回りさせない。
+def fatal_reason(code, text):
+    if code in (400, 401, 403, 404):
+        return f"HTTP {code}"
+    if code == 429 and any(w.lower() in text.lower() for w in ("free_tier", "limit: 0", "billing")):
+        return "無料枠では画像の生成が許されていない（limit: 0）"
+    return None
 
 
 def call(url, headers, body, timeout=180):
@@ -150,7 +183,11 @@ def main() -> int:
     path = os.environ.get("ART_API_PATH", DEFAULT_PATH)
 
     ok = fail = 0
+    stop = None       # 投げ直しても直らない不備。全体を止める
+    streak = 0        # 連続して落ちた数。空回りを長引かせない
     for n, j in enumerate(todo, 1):
+        if stop:
+            break
         body = json.loads(body_tpl
                           .replace("{prompt}", json.dumps(j["prompt"])[1:-1])
                           .replace("{ratio}", RATIO[j["種別"]]))
@@ -162,11 +199,13 @@ def main() -> int:
                 if raw is None:
                     print(f"  ✗ {tag}　{err}")
                     fail += 1
+                    streak += 1
                     break
                 ext = image_ext(raw)
                 if ext is None:
                     print(f"  ✗ {tag}　画像でない応答（{len(raw)} バイト）")
                     fail += 1
+                    streak += 1
                     break
                 dest = ART / j["種別"] / (j["配置名"] + ext)
                 dest.parent.mkdir(parents=True, exist_ok=True)
@@ -176,21 +215,38 @@ def main() -> int:
                 dest.write_bytes(raw)
                 print(f"  ✓ {tag}　{len(raw) / 1e6:.2f}MB")
                 ok += 1
+                streak = 0
                 break
             except urllib.error.HTTPError as e:
+                text = e.read().decode(errors="replace")
+                why = fatal_reason(e.code, text)
+                if why:
+                    print(f"  ✗ {tag}　{why}")
+                    fail += 1
+                    stop = (why, " ".join(text.split())[:400])
+                    break
                 wait = 2 ** attempt * 5
                 if e.code in (429, 500, 502, 503, 529) and attempt < 2:
                     print(f"  … {tag}　{e.code}。{wait} 秒待って再試行")
                     time.sleep(wait)
                     continue
-                print(f"  ✗ {tag}　HTTP {e.code} {e.read()[:200]!r}")
+                print(f"  ✗ {tag}　HTTP {e.code} {' '.join(text.split())[:200]}")
                 fail += 1
+                streak += 1
                 break
             except (urllib.error.URLError, OSError, ValueError) as e:
                 print(f"  ✗ {tag}　{e}")
                 fail += 1
+                streak += 1
                 break
+        if streak >= 5:
+            stop = ("五件続けて落ちた", "設定を見直すまで先へ進めない")
 
+    if stop:
+        print(f"\n── 中止　{stop[0]}")
+        print(f"   {stop[1]}")
+        print("   投げ直しても直らない類の不備なので、残りは投げていない。")
+        print("   直したうえで同じ命令を出せば、済んだ分は飛ばして続きから走る。")
     print(f"\n置いた {ok} 件／落とした {fail} 件")
     if ok:
         print("次に　python3 src/artwork.py inspect　で群として検分する。")

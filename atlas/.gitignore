@@ -12,3 +12,4 @@ out/artwork-print/
 out/artwork-screen/
 out/artwork-build.json
 out/*_分割?_*.pdf
+__pycache__/
