@@ -1,0 +1,71 @@
+// 図版説明の欧文訳
+//
+// 主図版の指示文の中心は、本書に刷ってある図版説明の一文である。
+// これを和文のまま渡すと、生成の側が拾う度合いが点によって変わる。
+// 変われば絵柄が揃わないので、訳を一箇所に持つ。
+//
+// 訳は逐語ではなく、**絵にすべきものだけ**を残してある。
+// 「記録が残っていない」「図は事件の後に測られた」といった記述は、
+// 本書の姿勢を示す一文であって、描くべき対象ではない。
+// 描けないことを指示文に混ぜると、生成の側がそれを絵にしようとする。
+
+export const CAPTION_EN = {
+  companions: 'A mead hall on a hilltop above a walled town; its roof is the hull of an upturned longship.',
+  thieves: 'A stone stair descending into a city sewer; from the street side it reads as nothing but a drain.',
+  nightingale: 'Three standing stones set in a ring on open ground.',
+  brotherhood: 'A sealed door set into rock, the entrance to an underground sanctuary.',
+  winterhold: 'A college on an isolated crag, reached by a single long bridge; the town around it has fallen into the sea.',
+  bards: 'A college hall in a walled city, a timber stage being raised before its gate.',
+  blades: 'A shrine cut into a gorge wall, its entrance invisible from outside the ravine.',
+  dawnguard: 'A fortress deep in a canyon, approached by one road only.',
+  volkihar: 'A castle on an island in a frozen sea, its causeway broken; seen from the far shore.',
+  greybeards: 'A monastery at the summit of a mountain stair of seven thousand steps, carved tablets set along the ascent.',
+  legion: 'A square fort beside a highway, built to hold the road rather than the field.',
+  stormcloaks: 'A great stone palace hall in an ancient walled city, its masonry visibly older than the rest.',
+  thalmor: 'An embassy standing alone on a hilltop, seen from the road below.',
+  penitus: 'A city gate, barred and guarded, closed for an imperial visit.',
+  moot: 'A free-standing stone gateway on open ground, deserted, with no guard.',
+  eastempire: 'A working quayside with three warehouses and moored vessels.',
+  silverhand: 'A timber hideout enclosed by a palisade plainly added after the building.',
+  vigilants: 'A small stone wayside shrine with an outbuilding.',
+  forsworn: 'A camp of hide tents on high moorland, near a ring of stones.',
+  psijic: 'A slender tower on an island, seen across water.',
+  synod: 'The open mouth of a ruined stone hall, unsealed.',
+  whispers: 'An empty stretch of forest road where a letter was found; nothing else is present.',
+  moragtong: 'An underground shrine chamber with a writing desk and shelved records.',
+  alikr: 'A mercenary camp on open ground outside a city gate, the walls behind it.',
+  shadows: 'A forest track, empty, the trees close on both sides.',
+  blackbriar: 'A city canal; a brewery fronts the water, barrels being moved by lamplight.',
+  silverblood: 'The mouth of a mine shaft in a cliff face, with a guarded gate.',
+  battleborn: 'A stone townhouse on a market square, its door opening straight onto the street.',
+  graymane: 'A timber house in a poorer city quarter, a forge chimney beyond it.',
+  ninedivines: 'The interior of a temple; nine altars along the wall, the ninth bare and empty.',
+  auriel: 'A shrine in a glacial valley, mostly buried in ice, only part of its entrance visible.',
+  moth: 'A scriptorium with its windows bricked up, lit by candles; reading desks in rows.',
+  tribunal: 'A temple sanctuary with three altars still standing.',
+  namira: 'A cave beneath a shrine, reached by a stair.',
+  miraak: 'A great stone seat on a windswept island, with heaps of quarried stone around it.',
+  dragoncult: 'A barrow on high ground, its doorway carved with an unfamiliar script.',
+  glenmoril: 'A hillside with three unblocked cave mouths.',
+  mythicdawn: 'A burnt-out house, never rebuilt.',
+  peryite: 'A stone altar in the open, bodies lying where they fell around it.',
+  idealmasters: 'A grey plain under a starless sky, with crystalline formations rising from it.',
+  daedriccults: 'A stone altar in the open, at a measured distance from any dwelling.',
+  skaal: 'A village of fewer than ten timber houses, one track leading away from it.',
+  redoran: 'A city gate rebuilt higher than its foundations, to keep out volcanic ash.',
+  telvanni: 'A tower grown from a giant fungus, not built of stone.',
+  orcstrongholds: 'A stronghold walled with timber and bone, with a single gate.',
+  khajiitcaravans: 'Merchant tents pitched outside a city gate, the walls closed behind them.',
+  riekling: 'A snowfield settlement; hide tents banked up with heaped snow.',
+  bandits: 'A ruined fort beside a road, only its gate repaired.',
+  alduin: 'A barrow seen from above, a winged shape in the sky over it.',
+  holdHaafingar: 'A city built on top of a great natural stone arch, a ship passing beneath it, an ice-free harbour below.',
+  holdEastmarch: 'A palace hall in a stone city; the lower courses of the city wall visibly the oldest masonry present.',
+  holdWhiterun: 'A hill rising from an open plain, a great hall at its summit, roads converging from every direction.',
+  holdReach: 'A city carved into the walls of a gorge; its stairs and aqueducts plainly not built by those who live there.',
+  holdRift: 'A city built on piles along a lake shore, canals running through the streets.',
+  holdFalkreath: 'A graveyard opened in a conifer forest, new plots still being added.',
+  holdPale: 'A small northern harbour free of ice, with a mine head above the town.',
+  holdWinterhold: 'The remains of a town after a collapse: a few houses, and a bridge running out over the sea.',
+  holdHjaalmarch: 'A timber settlement raised on piles above salt marsh.',
+};
